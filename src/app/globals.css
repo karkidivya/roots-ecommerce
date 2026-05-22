@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Minimal, premium palette: warm ivory canvas, deep ink, single olive accent */
+    --background: 40 28% 96%;
+    --foreground: 30 10% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 30 10% 16%;
+
+    --primary: 90 14% 28%;            /* muted olive */
+    --primary-foreground: 40 30% 97%;
+
+    --secondary: 38 18% 92%;
+    --secondary-foreground: 30 10% 16%;
+
+    --muted: 38 14% 90%;
+    --muted-foreground: 30 6% 42%;
+
+    --accent: 30 10% 16%;             /* same as foreground – neutral, not loud */
+    --accent-foreground: 40 28% 96%;
+
+    --destructive: 0 50% 38%;
+    --destructive-foreground: 40 28% 96%;
+
+    --border: 35 10% 84%;
+    --input: 35 10% 84%;
+    --ring: 90 14% 28%;
+
+    --radius: 0.25rem;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'ss01';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4, h5 {
+    @apply font-serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty  { text-wrap: pretty; }
+
+  .hairline { @apply border-t border-border/70; }
+
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-[0.22em] text-muted-foreground font-sans;
+  }
+}

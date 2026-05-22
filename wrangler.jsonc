@@ -1,0 +1,35 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "grain-roots",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-08-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  // Serve static assets (CSS, fonts, _next/static, /public) from Cloudflare's edge
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+
+  // Optional: R2 bucket for ISR / fetch cache. Uncomment after you've
+  // created the bucket: `npx wrangler r2 bucket create grain-roots-cache`
+  // Without this, cache is in-memory per-Worker-instance (still functional).
+  // "r2_buckets": [
+  //   {
+  //     "binding": "NEXT_INC_CACHE_R2_BUCKET",
+  //     "bucket_name": "grain-roots-cache"
+  //   }
+  // ],
+
+  // Public (non-secret) env vars. Secrets are set via:
+  //   npx wrangler secret put DATABASE_URL
+  //   npx wrangler secret put JWT_SECRET
+  //   ... etc
+  "vars": {
+    "NEXT_PUBLIC_APP_NAME": "Grain Roots"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}

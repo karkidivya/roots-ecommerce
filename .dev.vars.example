@@ -1,0 +1,24 @@
+# Local wrangler dev env vars. Copy to .dev.vars (gitignored) for local Cloudflare testing.
+# In production, set these via `wrangler secret put <NAME>` or the Cloudflare dashboard.
+
+DATABASE_URL="your_neon_postgres_url"
+JWT_SECRET="long_random_string_min_32_chars"
+ADMIN_PASSWORD="your_admin_password"
+
+# Cloudinary (public ones can stay in wrangler.jsonc vars; secret goes here)
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="dlk4mtgle"
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="nepal_shop_unsigned"
+CLOUDINARY_API_KEY="..."
+CLOUDINARY_API_SECRET="..."
+
+# Payments (production keys go to Cloudflare secrets)
+ESEWA_MERCHANT_CODE="EPAYTEST"
+ESEWA_SECRET_KEY="..."
+KHALTI_SECRET_KEY="..."
+NEXT_PUBLIC_KHALTI_PUBLIC_KEY="..."
+FONEPAY_MERCHANT_CODE="..."
+FONEPAY_SECRET_KEY="..."
+
+# Email
+RESEND_API_KEY="..."
+RESEND_FROM_EMAIL="orders@yourdomain.com"
