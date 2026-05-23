@@ -1,12 +1,17 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import { siteSections } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import {
+  siteSections,
+  products as productsTable,
+  categories as categoriesTable,
+} from '@/lib/db/schema';
+import { eq, asc } from 'drizzle-orm';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { CategoryImagePicker } from '../../categories/image-picker';
+import { SectionProductPicker } from '../product-picker';
 import { updateSection } from '../actions';
 
 export default async function EditSectionPage({
@@ -22,12 +27,36 @@ export default async function EditSectionPage({
     .limit(1);
   if (!section) notFound();
 
+  const showImage = ['hero', 'editorial'].includes(section.key);
+  const showBody = ['statement', 'editorial', 'hero', 'wholesale-cta'].includes(section.key);
+  const showCtas = ['hero', 'editorial', 'wholesale-cta'].includes(section.key);
+  const showProductPicker = ['featured-products', 'new-arrivals'].includes(section.key);
+
+  // Load product catalog only when this section needs it
+  const products = showProductPicker
+    ? await db
+        .select({
+          id: productsTable.id,
+          name: productsTable.name,
+          price: productsTable.price,
+          images: productsTable.images,
+          isActive: productsTable.isActive,
+          isFeatured: productsTable.isFeatured,
+          categoryName: categoriesTable.name,
+        })
+        .from(productsTable)
+        .leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id))
+        .orderBy(asc(productsTable.name))
+    : [];
+
   const action = updateSection.bind(null, id);
 
-  // Which fields apply to which section. Lets us hide irrelevant inputs.
-  const showImage = ['hero', 'editorial'].includes(section.key);
-  const showBody = ['statement', 'editorial', 'hero'].includes(section.key);
-  const showCtas = ['hero', 'editorial'].includes(section.key);
+  const fallbackHint =
+    section.key === 'featured-products'
+      ? 'Falls back to products marked as "Featured" on their product page.'
+      : section.key === 'new-arrivals'
+        ? 'Falls back to the 8 most recently created products.'
+        : undefined;
 
   return (
     <div>
@@ -86,17 +115,30 @@ export default async function EditSectionPage({
           </section>
         )}
 
+        {showProductPicker && (
+          <section className="rounded-lg border bg-card p-6 space-y-4">
+            <h2 className="text-lg font-semibold">Products</h2>
+            <p className="text-sm text-muted-foreground -mt-2">
+              Pick the products to show in this section. Reorder by clicking the
+              arrow on each selected product. Leave empty to use the default
+              automatic behavior.
+            </p>
+            <SectionProductPicker
+              name="productIds"
+              initial={(section.productIds as string[]) || []}
+              products={products}
+              fallbackHint={fallbackHint}
+            />
+          </section>
+        )}
+
         {showCtas && (
           <section className="rounded-lg border bg-card p-6 space-y-5">
             <h2 className="text-lg font-semibold">Call-to-action buttons</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="cta1Text">Primary button text</Label>
-                <Input
-                  id="cta1Text"
-                  name="cta1Text"
-                  defaultValue={section.cta1Text || ''}
-                />
+                <Input id="cta1Text" name="cta1Text" defaultValue={section.cta1Text || ''} />
               </div>
               <div>
                 <Label htmlFor="cta1Href">Primary button link</Label>
@@ -109,11 +151,7 @@ export default async function EditSectionPage({
               </div>
               <div>
                 <Label htmlFor="cta2Text">Secondary button text</Label>
-                <Input
-                  id="cta2Text"
-                  name="cta2Text"
-                  defaultValue={section.cta2Text || ''}
-                />
+                <Input id="cta2Text" name="cta2Text" defaultValue={section.cta2Text || ''} />
               </div>
               <div>
                 <Label htmlFor="cta2Href">Secondary button link</Label>

@@ -1,10 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ShoppingBag, Search, Menu, X, ChevronDown } from 'lucide-react';
 import { useCartStore } from '@/lib/cart/store';
 import { useState, useEffect, useRef } from 'react';
+
+const LOGO_URL =
+  'https://res.cloudinary.com/dlk4mtgle/image/upload/w_120,h_120,c_fill/v1779509310/692749951_122102590203303257_7552527138558933451_n_njp3qz.jpg';
 
 export function Header({ categories }: { categories: { name: string; slug: string }[] }) {
   const { toggleCart, getItemCount } = useCartStore();
@@ -59,9 +63,19 @@ export function Header({ categories }: { categories: { name: string; slug: strin
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
-        {/* Wordmark on left */}
-        <Link href="/" className="font-serif text-[22px] tracking-tight whitespace-nowrap">
-          {brand}
+        {/* Logo + wordmark on left */}
+        <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap">
+          <span className="relative h-9 w-9 overflow-hidden rounded-full ring-1 ring-border">
+            <Image
+              src={LOGO_URL}
+              alt={brand}
+              fill
+              sizes="36px"
+              className="object-cover"
+              priority
+            />
+          </span>
+          <span className="font-serif text-[22px] tracking-tight">{brand}</span>
         </Link>
 
         {/* Desktop nav with dropdowns */}

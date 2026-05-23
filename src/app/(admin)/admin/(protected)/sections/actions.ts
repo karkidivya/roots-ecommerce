@@ -14,6 +14,11 @@ async function requireAdmin() {
 export async function updateSection(id: string, formData: FormData) {
   await requireAdmin();
 
+  const productIdsRaw = str(formData.get('productIds'));
+  const productIds = productIdsRaw
+    ? productIdsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+
   await db
     .update(siteSections)
     .set({
@@ -25,6 +30,7 @@ export async function updateSection(id: string, formData: FormData) {
       cta1Href: str(formData.get('cta1Href')) || null,
       cta2Text: str(formData.get('cta2Text')) || null,
       cta2Href: str(formData.get('cta2Href')) || null,
+      productIds,
       isEnabled: formData.get('isEnabled') === 'on',
       sortOrder: Number(formData.get('sortOrder') || 0),
       updatedAt: new Date(),

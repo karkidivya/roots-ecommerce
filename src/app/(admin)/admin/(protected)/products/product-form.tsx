@@ -119,8 +119,8 @@ export function ProductForm({ action, product, categories, submitLabel }: Props)
         <ImageUploader name="images" initial={product?.images || []} />
       </section>
 
-      <section className="rounded-lg border bg-card p-6 space-y-3">
-        <h2 className="text-lg font-semibold">Visibility</h2>
+      <section className="rounded-lg border bg-card p-6 space-y-4">
+        <h2 className="text-lg font-semibold">Visibility & Order</h2>
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -139,6 +139,20 @@ export function ProductForm({ action, product, categories, submitLabel }: Props)
           />
           <span className="text-sm">Featured (shown on homepage)</span>
         </label>
+        <div className="pt-2">
+          <Label htmlFor="sortOrder">Sort priority</Label>
+          <Input
+            id="sortOrder"
+            name="sortOrder"
+            type="number"
+            defaultValue={product?.sortOrder ?? 0}
+            className="max-w-xs"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Lower number = appears earlier in the storefront. Use small numbers
+            (1, 2, 3…) for headline products. Leave at 0 to fall back to recency.
+          </p>
+        </div>
       </section>
 
       <div className="flex justify-end gap-3">

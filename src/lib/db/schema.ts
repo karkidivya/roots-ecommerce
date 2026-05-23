@@ -77,6 +77,8 @@ export const products = pgTable(
     hasVariants: boolean('has_variants').default(false).notNull(),
     isActive: boolean('is_active').default(true).notNull(),
     isFeatured: boolean('is_featured').default(false).notNull(),
+    // Lower = appears earlier in default storefront sort. 0 = no override.
+    sortOrder: integer('sort_order').default(0).notNull(),
     // SEO
     metaTitle: text('meta_title'),
     metaDescription: text('meta_description'),
@@ -227,6 +229,9 @@ export const siteSections = pgTable(
     cta1Href: text('cta1_href'),
     cta2Text: text('cta2_text'),
     cta2Href: text('cta2_href'),
+    // Manual product list for product-grid sections (Featured / New Arrivals).
+    // Empty array = fall back to auto behavior (isFeatured flag / recency).
+    productIds: jsonb('product_ids').$type<string[]>().default([]).notNull(),
     isEnabled: boolean('is_enabled').default(true).notNull(),
     sortOrder: integer('sort_order').default(0).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),

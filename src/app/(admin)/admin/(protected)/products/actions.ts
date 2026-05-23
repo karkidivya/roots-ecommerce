@@ -22,6 +22,7 @@ const ProductSchema = z.object({
   images: z.string().optional(), // comma-separated URLs
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
+  sortOrder: z.coerce.number().int().optional(),
 });
 
 async function requireAdmin() {
@@ -45,6 +46,7 @@ export async function createProduct(formData: FormData) {
     images: String(formData.get('images') || ''),
     isActive: formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'on',
+    sortOrder: formData.get('sortOrder') || 0,
   };
 
   const parsed = ProductSchema.safeParse(raw);
@@ -71,6 +73,7 @@ export async function createProduct(formData: FormData) {
     images: imageUrls,
     isActive: d.isActive ?? true,
     isFeatured: d.isFeatured ?? false,
+    sortOrder: d.sortOrder ?? 0,
   });
 
   revalidatePath('/admin/products');
@@ -94,6 +97,7 @@ export async function updateProduct(id: string, formData: FormData) {
     images: String(formData.get('images') || ''),
     isActive: formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'on',
+    sortOrder: formData.get('sortOrder') || 0,
   };
 
   const parsed = ProductSchema.safeParse(raw);
@@ -122,6 +126,7 @@ export async function updateProduct(id: string, formData: FormData) {
       images: imageUrls,
       isActive: d.isActive ?? true,
       isFeatured: d.isFeatured ?? false,
+      sortOrder: d.sortOrder ?? 0,
       updatedAt: new Date(),
     })
     .where(eq(productsTable.id, id));

@@ -1,4 +1,4 @@
-import { Check, Sprout, Truck, BadgePercent } from 'lucide-react';
+import { Sprout, Truck, BadgePercent } from 'lucide-react';
 
 export const metadata = {
   title: 'Wholesale Partners',
@@ -6,6 +6,8 @@ export const metadata = {
 };
 
 export default function WholesalePage() {
+  const formUrl = process.env.NEXT_PUBLIC_WHOLESALE_FORM_URL;
+
   return (
     <>
       {/* Hero */}
@@ -25,7 +27,7 @@ export default function WholesalePage() {
         </div>
       </section>
 
-      {/* Benefits strip */}
+      {/* Benefits */}
       <section className="container mx-auto px-6 py-16 border-t">
         <div className="grid gap-10 md:grid-cols-3">
           <Benefit
@@ -59,69 +61,33 @@ export default function WholesalePage() {
             </p>
           </div>
 
-          <form
-            action="mailto:karkidivya5@gmail.com?subject=Wholesale%20Partner%20Application"
-            method="POST"
-            encType="text/plain"
-            className="space-y-5"
-          >
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Business name" name="business" required />
-              <Field label="Your name" name="name" required />
-              <Field label="Email" name="email" type="email" required />
-              <Field label="Phone" name="phone" type="tel" required />
-            </div>
-
-            <div>
-              <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground block mb-2">
-                Partner type
-              </label>
-              <select
-                name="type"
-                required
-                className="h-11 w-full rounded-sm border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          {formUrl ? (
+            <div className="relative overflow-hidden rounded-sm border bg-card">
+              <iframe
+                src={formUrl}
+                width="100%"
+                height={1200}
+                className="block w-full"
+                title="Wholesale Partner Application"
+                loading="lazy"
               >
-                <option value="">Select one…</option>
-                <option>Distributor (regional / national)</option>
-                <option>Wholesaler</option>
-                <option>Retail store / Grocer</option>
-                <option>Café / Restaurant / Hotel</option>
-                <option>Online retailer</option>
-                <option>Gift shop / Corporate gifting</option>
-                <option>Other</option>
-              </select>
+                Loading…
+              </iframe>
             </div>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="City" name="city" required />
-              <Field label="Years in business" name="years" />
-            </div>
-
-            <div>
-              <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground block mb-2">
-                Tell us about your business
-              </label>
-              <textarea
-                name="message"
-                rows={6}
-                placeholder="What categories do you sell? Which products from us interest you? What monthly volume?"
-                required
-                className="rounded-sm border border-input bg-background px-3 py-3 text-sm w-full focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              />
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="submit"
-                className="h-11 w-full sm:w-auto rounded-sm bg-foreground px-8 text-sm font-medium text-background hover:bg-foreground/85"
-              >
-                Submit application
-              </button>
-              <p className="mt-3 text-xs text-muted-foreground">
-                This opens your email app. Direct submission via Resend will be added soon.
+          ) : (
+            <div className="rounded-sm border border-dashed bg-muted/30 p-8 text-center">
+              <p className="font-serif text-lg mb-2">Application form coming soon.</p>
+              <p className="text-sm text-muted-foreground mb-6">
+                In the meantime, email us directly with your business details.
               </p>
+              <a
+                href="mailto:karkidivya5@gmail.com?subject=Wholesale%20Partner%20Application"
+                className="inline-flex h-11 items-center justify-center rounded-sm bg-foreground px-6 text-sm font-medium text-background hover:bg-foreground/85"
+              >
+                Email us
+              </a>
             </div>
-          </form>
+          )}
         </div>
       </section>
     </>
@@ -144,33 +110,6 @@ function Benefit({
       </span>
       <h3 className="font-serif text-xl mb-2">{title}</h3>
       <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = 'text',
-  required,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-}) {
-  return (
-    <div>
-      <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground block mb-2">
-        {label}
-        {required && <span className="ml-1 text-foreground">*</span>}
-      </label>
-      <input
-        name={name}
-        type={type}
-        required={required}
-        className="h-11 w-full rounded-sm border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { products as productsTable, categories as categoriesTable } from '@/lib/db/schema';
-import { and, eq, gte, lte, ilike, sql, asc, desc, type SQL } from 'drizzle-orm';
+import { and, eq, gte, lte, ilike, asc, desc, sql, type SQL } from 'drizzle-orm';
 import { ProductCard } from '@/components/shop/product-card';
 
 export const revalidate = 60;
@@ -11,7 +11,7 @@ interface SearchParams {
   minPrice?: string;
   maxPrice?: string;
   q?: string;
-  sort?: 'newest' | 'price-asc' | 'price-desc';
+  sort?: 'featured' | 'newest' | 'price-asc' | 'price-desc';
 }
 
 export default async function ProductsPage({
@@ -41,19 +41,27 @@ export default async function ProductsPage({
     conditions.push(ilike(productsTable.name, `%${params.q}%`));
   }
 
-  const orderBy =
+  const orderByClauses =
     params.sort === 'price-asc'
-      ? asc(productsTable.price)
+      ? [asc(productsTable.price)]
       : params.sort === 'price-desc'
-      ? desc(productsTable.price)
-      : desc(productsTable.createdAt);
+      ? [desc(productsTable.price)]
+      : params.sort === 'newest'
+      ? [desc(productsTable.createdAt)]
+      : // Default "featured": explicit sort_order first (treat 0 = unset = last),
+        // then Featured-flagged products, then newest
+        [
+          sql`CASE WHEN ${productsTable.sortOrder} = 0 THEN 999999 ELSE ${productsTable.sortOrder} END ASC`,
+          desc(productsTable.isFeatured),
+          desc(productsTable.createdAt),
+        ];
 
   const [items, cats] = await Promise.all([
     db
       .select()
       .from(productsTable)
       .where(and(...conditions))
-      .orderBy(orderBy)
+      .orderBy(...orderByClauses)
       .limit(48),
     db
       .select()
@@ -129,9 +137,10 @@ export default async function ProductsPage({
               <label className="text-sm font-medium block mb-2">Sort</label>
               <select
                 name="sort"
-                defaultValue={params.sort || 'newest'}
+                defaultValue={params.sort || 'featured'}
                 className="h-9 w-full rounded-md border bg-background px-3 text-sm"
               >
+                <option value="featured">Featured</option>
                 <option value="newest">Newest</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
