@@ -11,12 +11,12 @@ export async function GET(req: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
 
   if (!orderId || !pidx) {
-    return NextResponse.redirect(`${appUrl}/order/error?reason=missing-params`);
+    return NextResponse.redirect(`${appUrl}/checkout/failed?reason=missing-params`);
   }
 
   const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
   if (!order) {
-    return NextResponse.redirect(`${appUrl}/order/error?reason=not-found`);
+    return NextResponse.redirect(`${appUrl}/checkout/failed?reason=not-found`);
   }
 
   try {

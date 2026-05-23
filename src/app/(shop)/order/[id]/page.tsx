@@ -6,6 +6,7 @@ import { orders, orderItems } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { OrderTimeline } from '@/components/shop/order-timeline';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +19,11 @@ export default async function OrderPage({
 }) {
   const { id } = await params;
   const { status } = await searchParams;
+
+  // Guard against non-UUID inputs (e.g. /order/error from an old redirect) so
+  // Postgres doesn't throw an invalid-uuid syntax error.
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(id)) notFound();
 
   const [order] = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
   if (!order) notFound();
@@ -60,6 +66,23 @@ export default async function OrderPage({
           Order Number: <span className="font-mono font-semibold">{order.orderNumber}</span>
         </p>
       </div>
+
+      {/* Status timeline */}
+      {isSuccess && (
+        <div className="mt-6 rounded-lg border bg-card p-6">
+          <h2 className="text-sm font-medium uppercase tracking-wider text-muted-foreground mb-5">
+            Status
+          </h2>
+          <OrderTimeline status={order.status} />
+          <p className="mt-5 pt-5 border-t text-xs text-muted-foreground">
+            Last updated{' '}
+            {new Date(order.updatedAt).toLocaleString('en-NP', {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+            })}
+          </p>
+        </div>
+      )}
 
       <div className="mt-8 rounded-lg border p-6">
         <h2 className="text-lg font-semibold mb-4">Order Details</h2>
@@ -108,12 +131,17 @@ export default async function OrderPage({
         </div>
       </div>
 
-      <div className="mt-8 flex gap-3">
-        <Button asChild className="flex-1">
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Button asChild className="flex-1 min-w-[200px]">
           <Link href="/products">Continue Shopping</Link>
         </Button>
+        {isSuccess && (
+          <Button asChild variant="outline" className="flex-1 min-w-[200px]">
+            <Link href={`/order/${order.id}/receipt`}>Download Receipt</Link>
+          </Button>
+        )}
         {isFailed && (
-          <Button asChild variant="outline" className="flex-1">
+          <Button asChild variant="outline" className="flex-1 min-w-[200px]">
             <Link href="/checkout">Try Again</Link>
           </Button>
         )}

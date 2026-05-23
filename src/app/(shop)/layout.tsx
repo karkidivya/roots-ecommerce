@@ -9,7 +9,12 @@ export const revalidate = 3600; // 1 hour
 
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
   const cats = await db
-    .select({ name: categoriesTable.name, slug: categoriesTable.slug })
+    .select({
+      name: categoriesTable.name,
+      slug: categoriesTable.slug,
+      imageUrl: categoriesTable.imageUrl,
+      description: categoriesTable.description,
+    })
     .from(categoriesTable)
     .where(eq(categoriesTable.isActive, true))
     .orderBy(categoriesTable.sortOrder);

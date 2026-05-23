@@ -10,7 +10,14 @@ import { useState, useEffect, useRef } from 'react';
 const LOGO_URL =
   'https://res.cloudinary.com/dlk4mtgle/image/upload/w_120,h_120,c_fill/v1779509310/692749951_122102590203303257_7552527138558933451_n_njp3qz.jpg';
 
-export function Header({ categories }: { categories: { name: string; slug: string }[] }) {
+interface HeaderCategory {
+  name: string;
+  slug: string;
+  imageUrl?: string | null;
+  description?: string | null;
+}
+
+export function Header({ categories }: { categories: HeaderCategory[] }) {
   const { toggleCart, getItemCount } = useCartStore();
   const router = useRouter();
   const [count, setCount] = useState(0);
@@ -19,6 +26,22 @@ export function Header({ categories }: { categories: { name: string; slug: strin
   const [query, setQuery] = useState('');
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scheduleClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenMenu(null), 180);
+  };
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+  const openImmediate = (key: string) => {
+    cancelClose();
+    setOpenMenu(key);
+  };
 
   useEffect(() => setCount(getItemCount()), [getItemCount]);
   useEffect(() => {
@@ -82,53 +105,45 @@ export function Header({ categories }: { categories: { name: string; slug: strin
         <div
           ref={navRef}
           className="hidden lg:flex items-center gap-7 text-[13px] ml-4"
-          onMouseLeave={() => setOpenMenu(null)}
         >
-          {/* Shop dropdown */}
+          {/* Shop mega-menu */}
           <div
             className="relative"
-            onMouseEnter={() => setOpenMenu('shop')}
+            onMouseEnter={() => openImmediate('shop')}
+            onMouseLeave={scheduleClose}
           >
             <button
               type="button"
-              onClick={() => setOpenMenu(openMenu === 'shop' ? null : 'shop')}
+              onClick={() => (openMenu === 'shop' ? setOpenMenu(null) : openImmediate('shop'))}
               className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
             >
               Shop <ChevronDown className="h-3 w-3" />
             </button>
             {openMenu === 'shop' && (
-              <DropdownPanel>
-                <DropdownItem href="/products" onClick={() => setOpenMenu(null)}>
-                  All products
-                </DropdownItem>
-                <DropdownDivider />
-                {categories.map((c) => (
-                  <DropdownItem
-                    key={c.slug}
-                    href={`/category/${c.slug}`}
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    {c.name}
-                  </DropdownItem>
-                ))}
-              </DropdownPanel>
+              <ShopMegaMenu
+                categories={categories}
+                onSelect={() => setOpenMenu(null)}
+                onMouseEnter={cancelClose}
+                onMouseLeave={scheduleClose}
+              />
             )}
           </div>
 
           {/* About dropdown */}
           <div
             className="relative"
-            onMouseEnter={() => setOpenMenu('about')}
+            onMouseEnter={() => openImmediate('about')}
+            onMouseLeave={scheduleClose}
           >
             <button
               type="button"
-              onClick={() => setOpenMenu(openMenu === 'about' ? null : 'about')}
+              onClick={() => (openMenu === 'about' ? setOpenMenu(null) : openImmediate('about'))}
               className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
             >
               About <ChevronDown className="h-3 w-3" />
             </button>
             {openMenu === 'about' && (
-              <DropdownPanel>
+              <DropdownPanel onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
                 <DropdownItem href="/about" onClick={() => setOpenMenu(null)}>
                   Our story
                 </DropdownItem>
@@ -144,6 +159,9 @@ export function Header({ categories }: { categories: { name: string; slug: strin
 
           <Link href="/wholesale" className="hover:text-muted-foreground transition-colors">
             Wholesale
+          </Link>
+          <Link href="/track" className="hover:text-muted-foreground transition-colors">
+            Track
           </Link>
           <Link href="/contact" className="hover:text-muted-foreground transition-colors">
             Contact
@@ -227,6 +245,9 @@ export function Header({ categories }: { categories: { name: string; slug: strin
             <Link href="/wholesale" onClick={() => setMobileOpen(false)} className="py-2 text-sm">
               Wholesale partners
             </Link>
+            <Link href="/track" onClick={() => setMobileOpen(false)} className="py-2 text-sm">
+              Track order
+            </Link>
             <Link href="/contact" onClick={() => setMobileOpen(false)} className="py-2 text-sm">
               Contact
             </Link>
@@ -237,11 +258,85 @@ export function Header({ categories }: { categories: { name: string; slug: strin
   );
 }
 
-function DropdownPanel({ children }: { children: React.ReactNode }) {
+function DropdownPanel({
+  children,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  children: React.ReactNode;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+}) {
   return (
-    <div className="absolute left-0 top-full pt-3">
+    <div
+      className="absolute left-0 top-full pt-3"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div className="min-w-[200px] rounded-sm border border-border bg-card py-2 shadow-soft">
         {children}
+      </div>
+    </div>
+  );
+}
+
+function ShopMegaMenu({
+  categories,
+  onSelect,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  categories: HeaderCategory[];
+  onSelect: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+}) {
+  return (
+    <div
+      className="absolute left-0 top-full pt-2 z-50"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <div className="rounded-sm border border-border bg-card shadow-lift overflow-hidden w-[560px]">
+        {/* Header row */}
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/70">
+          <p className="eyebrow">Browse</p>
+          <Link
+            href="/products"
+            onClick={onSelect}
+            className="text-xs hover:text-muted-foreground transition-colors"
+          >
+            All products →
+          </Link>
+        </div>
+
+        {/* Category cards grid — smaller, denser */}
+        <div className="grid grid-cols-4 gap-3 p-4">
+          {categories.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/category/${c.slug}`}
+              onClick={onSelect}
+              className="group block"
+            >
+              <div className="relative aspect-square overflow-hidden bg-muted rounded-sm">
+                {c.imageUrl && (
+                  <Image
+                    src={c.imageUrl}
+                    alt={c.name}
+                    fill
+                    sizes="130px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <div className="pt-2">
+                <h3 className="font-serif text-[13px] leading-tight">{c.name}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -267,6 +362,3 @@ function DropdownItem({
   );
 }
 
-function DropdownDivider() {
-  return <div className="my-1 border-t border-border/70" />;
-}

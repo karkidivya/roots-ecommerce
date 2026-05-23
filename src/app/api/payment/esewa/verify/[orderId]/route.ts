@@ -5,19 +5,32 @@ import { eq } from 'drizzle-orm';
 import { decodeEsewaResponse, verifyEsewaPayment } from '@/lib/payments/esewa';
 import { fromPaisa } from '@/lib/utils';
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const orderId = searchParams.get('orderId');
-  const data = searchParams.get('data');
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ orderId: string }> }
+) {
+  const { orderId } = await params;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
 
-  if (!orderId || !data) {
-    return NextResponse.redirect(`${appUrl}/order/error?reason=missing-params`);
+  if (!UUID_RE.test(orderId)) {
+    return NextResponse.redirect(`${appUrl}/checkout/failed?reason=missing-params`);
   }
 
   const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
   if (!order) {
-    return NextResponse.redirect(`${appUrl}/order/error?reason=not-found`);
+    return NextResponse.redirect(`${appUrl}/checkout/failed?reason=not-found`);
+  }
+
+  // eSewa may omit `data` if the user cancelled — treat as failed, not crash
+  const data = req.nextUrl.searchParams.get('data');
+  if (!data) {
+    await db
+      .update(orders)
+      .set({ paymentStatus: 'failed', updatedAt: new Date() })
+      .where(eq(orders.id, orderId));
+    return NextResponse.redirect(`${appUrl}/order/${orderId}?status=failed`);
   }
 
   const decoded = decodeEsewaResponse(data);
@@ -25,7 +38,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${appUrl}/order/${orderId}?status=failed`);
   }
 
-  // Verify with eSewa server-to-server status check
   const verify = await verifyEsewaPayment(decoded.transaction_uuid, fromPaisa(order.total));
 
   if (verify?.status === 'COMPLETE') {

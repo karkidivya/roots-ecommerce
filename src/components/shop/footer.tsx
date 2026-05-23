@@ -28,9 +28,10 @@ export function Footer() {
           <div className="md:col-span-2">
             <p className="eyebrow mb-4">Company</p>
             <ul className="space-y-2.5 text-sm">
-              <li><a href="#" className="hover:text-muted-foreground">Story</a></li>
-              <li><a href="#" className="hover:text-muted-foreground">Farmers</a></li>
-              <li><a href="#" className="hover:text-muted-foreground">Journal</a></li>
+              <li><Link href="/about" className="hover:text-muted-foreground">Story</Link></li>
+              <li><Link href="/about#farmers" className="hover:text-muted-foreground">Farmers</Link></li>
+              <li><Link href="/wholesale" className="hover:text-muted-foreground">Wholesale</Link></li>
+              <li><Link href="/track" className="hover:text-muted-foreground">Track order</Link></li>
               <li><Link href="/contact" className="hover:text-muted-foreground">Contact</Link></li>
             </ul>
           </div>

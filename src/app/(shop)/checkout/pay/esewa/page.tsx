@@ -21,7 +21,7 @@ export default async function EsewaPayPage({
   const formData = getEsewaFormData({
     amount: fromPaisa(order.total),
     productCode: order.orderNumber,
-    successUrl: `${appUrl}/api/payment/esewa/verify?orderId=${order.id}`,
+    successUrl: `${appUrl}/api/payment/esewa/verify/${order.id}`,
     failureUrl: `${appUrl}/order/${order.id}?status=failed`,
   });
 

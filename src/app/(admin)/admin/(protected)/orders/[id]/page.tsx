@@ -58,14 +58,23 @@ export default async function AdminOrderDetailPage({
       >
         ← Back to orders
       </Link>
-      <h1 className="text-3xl font-bold mt-2">Order {order.orderNumber}</h1>
-      <p className="text-sm text-muted-foreground mt-1">
-        Placed on{' '}
-        {new Date(order.createdAt).toLocaleString('en-NP', {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-        })}
-      </p>
+      <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold">Order {order.orderNumber}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Placed on{' '}
+            {new Date(order.createdAt).toLocaleString('en-NP', {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+            })}
+          </p>
+        </div>
+        <Button asChild variant="outline" size="sm">
+          <Link href={`/order/${order.id}/receipt`} target="_blank">
+            Open receipt
+          </Link>
+        </Button>
+      </div>
 
       <div className="mt-6 grid gap-6 md:grid-cols-[1fr_360px]">
         <div className="space-y-6">
