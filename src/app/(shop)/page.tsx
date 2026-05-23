@@ -12,6 +12,7 @@ import {
   HeroSection,
   StatementSection,
   EditorialSection,
+  WholesaleCtaSection,
   SectionHeader,
 } from '@/components/shop/home-sections';
 
@@ -66,6 +67,8 @@ export default async function HomePage() {
             );
           case 'editorial':
             return <EditorialSection key={s.id} s={s} />;
+          case 'wholesale-cta':
+            return <WholesaleCtaSection key={s.id} s={s} />;
           case 'categories-grid':
             return (
               <section key={s.id} className="container mx-auto px-6 py-24">

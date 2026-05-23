@@ -237,6 +237,16 @@ async function seed() {
       sortOrder: 50,
     },
     {
+      key: 'wholesale-cta',
+      name: 'Wholesale CTA',
+      eyebrow: 'Partnerships',
+      heading: 'Sell our products in your store.',
+      body: 'Distributors, wholesalers and retail partners — apply to join the Grain Roots family. Wholesale pricing, free delivery, and full traceability.',
+      cta1Text: 'Apply now',
+      cta1Href: '/wholesale',
+      sortOrder: 55,
+    },
+    {
       key: 'new-arrivals',
       name: 'New arrivals',
       heading: 'New arrivals',

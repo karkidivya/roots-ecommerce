@@ -118,6 +118,42 @@ export function EditorialSection({ s }: { s: SiteSection }) {
   );
 }
 
+export function WholesaleCtaSection({ s }: { s: SiteSection }) {
+  return (
+    <section className="bg-foreground text-background">
+      <div className="container mx-auto px-6 py-20 md:py-28">
+        <div className="max-w-3xl mx-auto text-center">
+          {s.eyebrow && (
+            <p className="text-[11px] uppercase tracking-[0.3em] text-background/70 mb-6">
+              {s.eyebrow}
+            </p>
+          )}
+          {s.heading && (
+            <h2 className="font-serif text-3xl md:text-5xl leading-[1.1] text-balance">
+              {s.heading}
+            </h2>
+          )}
+          {s.body && (
+            <p className="mt-5 text-background/80 leading-relaxed max-w-xl mx-auto text-pretty">
+              {s.body}
+            </p>
+          )}
+          {s.cta1Text && s.cta1Href && (
+            <div className="mt-8">
+              <Link
+                href={s.cta1Href}
+                className="inline-flex items-center justify-center rounded-sm bg-background px-8 h-12 text-sm font-medium text-foreground hover:bg-background/90 transition-colors"
+              >
+                {s.cta1Text}
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function SectionHeader({ s, viewAllHref }: { s: SiteSection; viewAllHref?: string }) {
   return (
     <div className="flex items-end justify-between mb-10">

@@ -23,19 +23,19 @@ export default function ContactPage() {
           <ContactItem
             icon={<Mail className="h-4 w-4" />}
             label="Email"
-            value="support@example.com"
-            href="mailto:support@example.com"
+            value="karkidivya5@gmail.com"
+            href="mailto:karkidivya5@gmail.com"
           />
           <ContactItem
             icon={<Phone className="h-4 w-4" />}
             label="Phone"
-            value="+977-1-XXX-XXXX"
-            href="tel:+97712345678"
+            value="+977-9863867234"
+            href="tel:+977xxxxxxx"
           />
           <ContactItem
             icon={<MapPin className="h-4 w-4" />}
             label="Address"
-            value="Kathmandu, Nepal"
+            value="Biratnagar, Nepal"
           />
           <ContactItem
             icon={<Instagram className="h-4 w-4" />}
@@ -44,7 +44,7 @@ export default function ContactPage() {
             href="#"
             secondary={{
               icon: <Facebook className="h-4 w-4" />,
-              value: 'facebook.com/grainroots',
+              value: 'facebook.com/grainrootsfood',
               href: '#',
             }}
           />
@@ -53,7 +53,7 @@ export default function ContactPage() {
         <div className="mt-16 border-t pt-10">
           <h2 className="font-serif text-2xl mb-6">Send a message</h2>
           <form
-            action="mailto:support@example.com"
+            action="mailto:karkidivya5@gmail.com"
             method="POST"
             encType="text/plain"
             className="grid gap-4 max-w-xl"
