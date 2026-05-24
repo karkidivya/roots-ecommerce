@@ -70,12 +70,33 @@ export default async function ProductsPage({
   ]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">All Products</h1>
+    <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="flex items-end justify-between mb-6 sm:mb-10">
+        <h1 className="font-serif text-3xl sm:text-4xl">All Products</h1>
+        <p className="hidden sm:block text-xs text-muted-foreground">
+          {items.length} {items.length === 1 ? 'item' : 'items'}
+        </p>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-[240px_1fr]">
-        {/* Filters sidebar */}
-        <aside className="space-y-6">
+        {/* Mobile filter toggle (CSS-only via peer checkbox).
+            Checkbox + label + sidebar are all peers so peer-checked: works. */}
+        <input
+          type="checkbox"
+          id="filters-toggle"
+          className="peer hidden"
+          defaultChecked={false}
+        />
+        <label
+          htmlFor="filters-toggle"
+          className="md:hidden order-1 inline-flex items-center justify-between rounded-sm border border-input bg-card px-4 h-11 text-sm cursor-pointer hover:bg-muted"
+        >
+          <span className="font-medium">Filters & sort</span>
+          <span className="text-xs text-muted-foreground">Tap to toggle</span>
+        </label>
+
+        {/* Filters sidebar — collapsed on mobile, always shown on desktop */}
+        <aside className="order-2 md:order-none hidden peer-checked:block md:block space-y-6">
           <form className="space-y-4">
             <div>
               <label className="text-sm font-medium block mb-2">Search</label>
@@ -161,9 +182,9 @@ export default async function ProductsPage({
         </aside>
 
         {/* Product grid */}
-        <div>
-          <p className="text-sm text-muted-foreground mb-4">
-            Showing {items.length} {items.length === 1 ? 'product' : 'products'}
+        <div className="order-3 md:order-none">
+          <p className="sm:hidden text-xs text-muted-foreground mb-4">
+            {items.length} {items.length === 1 ? 'item' : 'items'}
           </p>
           {items.length === 0 ? (
             <div className="rounded-lg border border-dashed p-12 text-center">
@@ -173,7 +194,7 @@ export default async function ProductsPage({
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-10">
               {items.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}

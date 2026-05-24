@@ -85,38 +85,42 @@ export default async function ProductPage({
       : 0;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <nav className="text-sm text-muted-foreground mb-6">
-        <Link href="/" className="hover:text-primary">Home</Link>
+    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <nav className="text-xs text-muted-foreground mb-6 flex flex-wrap items-center gap-x-1">
+        <Link href="/" className="hover:text-foreground">Home</Link>
         {category && (
           <>
-            <span className="mx-2">/</span>
-            <Link href={`/category/${category.slug}`} className="hover:text-primary">
+            <span>/</span>
+            <Link href={`/category/${category.slug}`} className="hover:text-foreground">
               {category.name}
             </Link>
           </>
         )}
-        <span className="mx-2">/</span>
-        <span className="text-foreground">{product.name}</span>
+        <span>/</span>
+        <span className="text-foreground line-clamp-1">{product.name}</span>
       </nav>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-8 md:gap-12 md:grid-cols-2">
         <ProductGallery images={product.images || []} alt={product.name} />
 
-        <div>
-          <h1 className="text-3xl font-bold">{product.name}</h1>
+        <div className="md:pt-2">
+          <h1 className="font-serif text-3xl sm:text-4xl leading-tight text-balance">
+            {product.name}
+          </h1>
           {product.shortDescription && (
-            <p className="mt-2 text-muted-foreground">{product.shortDescription}</p>
+            <p className="mt-3 text-muted-foreground">{product.shortDescription}</p>
           )}
 
-          <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-3xl font-bold">{formatPrice(product.price)}</span>
+          <div className="mt-5 flex items-baseline flex-wrap gap-3">
+            <span className="font-serif text-2xl sm:text-3xl">
+              {formatPrice(product.price)}
+            </span>
             {product.compareAtPrice && product.compareAtPrice > product.price && (
               <>
-                <span className="text-lg text-muted-foreground line-through">
+                <span className="text-base text-muted-foreground line-through">
                   {formatPrice(product.compareAtPrice)}
                 </span>
-                <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                <span className="rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">
                   Save {discount}%
                 </span>
               </>
@@ -125,39 +129,39 @@ export default async function ProductPage({
 
           <p className="mt-3 text-sm">
             {product.stock > 0 ? (
-              <span className="text-green-600">
-                ✓ In stock ({product.stock} available)
+              <span className="text-foreground/70">
+                In stock — {product.stock} available
               </span>
             ) : (
               <span className="text-destructive">Out of stock</span>
             )}
           </p>
 
-          <div className="mt-6">
+          <div className="mt-7">
             <AddToCartButton product={product} />
           </div>
 
           {product.description && (
-            <div className="mt-8 pt-6 border-t">
-              <h2 className="text-lg font-semibold mb-3">Description</h2>
-              <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
+            <div className="mt-10 pt-8 border-t">
+              <p className="eyebrow mb-3">Description</p>
+              <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                 {product.description}
               </div>
             </div>
           )}
 
-          <div className="mt-6 pt-6 border-t space-y-2 text-sm text-muted-foreground">
+          <div className="mt-8 pt-6 border-t space-y-1.5 text-xs text-muted-foreground">
             {product.sku && <p>SKU: {product.sku}</p>}
             <p>Payment: eSewa · Khalti · Fonepay</p>
-            <p>Delivery: Nationwide (Nepal)</p>
+            <p>Delivery nationwide across Nepal</p>
           </div>
         </div>
       </div>
 
       {related.length > 0 && (
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold mb-6">You may also like</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section className="mt-20 sm:mt-24 pt-10 border-t">
+          <h2 className="font-serif text-2xl sm:text-3xl mb-8">You may also like</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

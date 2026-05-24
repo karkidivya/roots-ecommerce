@@ -10,7 +10,11 @@ import { redirect } from 'next/navigation';
 
 const CheckoutSchema = z.object({
   customerName: z.string().min(2),
-  customerEmail: z.string().email(),
+  customerEmail: z
+    .string()
+    .email()
+    .optional()
+    .or(z.literal('').transform(() => undefined)),
   customerPhone: z.string().min(10),
   shippingProvince: z.string().min(1),
   shippingDistrict: z.string().min(1),
@@ -18,8 +22,10 @@ const CheckoutSchema = z.object({
   shippingWard: z.string().optional(),
   shippingAddress: z.string().min(3),
   shippingLandmark: z.string().optional(),
+  shippingLat: z.string().optional(),
+  shippingLng: z.string().optional(),
   notes: z.string().optional(),
-  paymentMethod: z.enum(['esewa', 'khalti', 'fonepay']),
+  paymentMethod: z.enum(['esewa', 'khalti', 'fonepay', 'cod']),
   items: z
     .array(
       z.object({
@@ -93,7 +99,7 @@ export async function createOrder(
     .values({
       orderNumber,
       customerName: data.customerName,
-      customerEmail: data.customerEmail,
+      customerEmail: data.customerEmail || null,
       customerPhone: data.customerPhone,
       shippingProvince: data.shippingProvince,
       shippingDistrict: data.shippingDistrict,
@@ -101,6 +107,8 @@ export async function createOrder(
       shippingWard: data.shippingWard,
       shippingAddress: data.shippingAddress,
       shippingLandmark: data.shippingLandmark,
+      shippingLat: data.shippingLat || null,
+      shippingLng: data.shippingLng || null,
       notes: data.notes,
       subtotal,
       shippingFee,
@@ -132,7 +140,7 @@ export async function createOrder(
         purchaseOrderId: orderNumber,
         purchaseOrderName: `Order ${orderNumber}`,
         customerName: data.customerName,
-        customerEmail: data.customerEmail,
+        customerEmail: data.customerEmail || `${data.customerPhone}@noemail.local`,
         customerPhone: data.customerPhone,
         returnUrl: `${appUrl}/api/payment/khalti/verify?orderId=${newOrder.id}`,
         websiteUrl: appUrl,

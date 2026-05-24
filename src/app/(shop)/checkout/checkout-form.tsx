@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
+import { LocationPicker } from '@/components/shop/location-picker';
 import { createOrder } from './actions';
 
 export function CheckoutForm() {
@@ -17,6 +18,7 @@ export function CheckoutForm() {
   const { items, getSubtotal, clearCart } = useCartStore();
   const [submitting, setSubmitting] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'esewa' | 'khalti' | 'fonepay' | 'cod'>('esewa');
 
   useEffect(() => setHydrated(true), []);
 
@@ -50,8 +52,10 @@ export function CheckoutForm() {
       shippingWard: String(formData.get('shippingWard') || ''),
       shippingAddress: String(formData.get('shippingAddress') || ''),
       shippingLandmark: String(formData.get('shippingLandmark') || ''),
+      shippingLat: String(formData.get('shippingLat') || ''),
+      shippingLng: String(formData.get('shippingLng') || ''),
       notes: String(formData.get('notes') || ''),
-      paymentMethod: formData.get('paymentMethod') as 'esewa' | 'khalti' | 'fonepay',
+      paymentMethod: formData.get('paymentMethod') as 'esewa' | 'khalti' | 'fonepay' | 'cod',
       items: items.map((i) => ({
         productId: i.productId,
         variantId: i.variantId,
@@ -66,6 +70,13 @@ export function CheckoutForm() {
     }
 
     clearCart();
+    const method = formData.get('paymentMethod');
+
+    // Cash on Delivery — no gateway, straight to the order page
+    if (method === 'cod') {
+      router.push(`/order/${result.orderId}?status=success`);
+      return;
+    }
 
     // Khalti returns redirectUrl directly
     if (result.redirectUrl) {
@@ -74,7 +85,6 @@ export function CheckoutForm() {
     }
 
     // eSewa / Fonepay: go to a server page that submits the form to the gateway
-    const method = formData.get('paymentMethod');
     router.push(`/checkout/pay/${method}?orderId=${result.orderId}`);
   };
 
@@ -99,8 +109,13 @@ export function CheckoutForm() {
               />
             </div>
             <div className="sm:col-span-2">
-              <Label htmlFor="customerEmail">Email *</Label>
-              <Input id="customerEmail" name="customerEmail" type="email" required />
+              <Label htmlFor="customerEmail">Email (optional)</Label>
+              <Input
+                id="customerEmail"
+                name="customerEmail"
+                type="email"
+                placeholder="For order updates & tracking"
+              />
             </div>
           </div>
         </section>
@@ -146,14 +161,45 @@ export function CheckoutForm() {
               <Input id="notes" name="notes" placeholder="Anything we should know?" />
             </div>
           </div>
+
+          {/* Map pin */}
+          <div className="mt-6 pt-6 border-t">
+            <Label className="mb-2 block">Pin your location on the map (optional)</Label>
+            <LocationPicker />
+          </div>
         </section>
 
         <section className="rounded-lg border p-6">
           <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
           <div className="space-y-3">
-            <PaymentOption value="esewa" label="eSewa" desc="Pay via eSewa wallet" />
-            <PaymentOption value="khalti" label="Khalti" desc="Pay via Khalti wallet" />
-            <PaymentOption value="fonepay" label="Fonepay" desc="Pay via Fonepay QR / mobile banking" />
+            <PaymentOption
+              value="esewa"
+              label="eSewa"
+              desc="Pay via eSewa wallet"
+              checked={paymentMethod === 'esewa'}
+              onChange={() => setPaymentMethod('esewa')}
+            />
+            <PaymentOption
+              value="khalti"
+              label="Khalti"
+              desc="Pay via Khalti wallet"
+              checked={paymentMethod === 'khalti'}
+              onChange={() => setPaymentMethod('khalti')}
+            />
+            <PaymentOption
+              value="fonepay"
+              label="Fonepay"
+              desc="Pay via Fonepay QR / mobile banking"
+              checked={paymentMethod === 'fonepay'}
+              onChange={() => setPaymentMethod('fonepay')}
+            />
+            <PaymentOption
+              value="cod"
+              label="Cash on Delivery"
+              desc="Pay in cash when your order arrives"
+              checked={paymentMethod === 'cod'}
+              onChange={() => setPaymentMethod('cod')}
+            />
           </div>
         </section>
       </div>
@@ -201,7 +247,11 @@ export function CheckoutForm() {
           className="w-full mt-6"
           disabled={submitting || items.length === 0}
         >
-          {submitting ? 'Placing order...' : `Pay ${formatPrice(total)}`}
+          {submitting
+            ? 'Placing order...'
+            : paymentMethod === 'cod'
+              ? `Place order — ${formatPrice(total)}`
+              : `Pay ${formatPrice(total)}`}
         </Button>
       </aside>
     </form>
@@ -212,10 +262,14 @@ function PaymentOption({
   value,
   label,
   desc,
+  checked,
+  onChange,
 }: {
   value: string;
   label: string;
   desc: string;
+  checked: boolean;
+  onChange: () => void;
 }) {
   return (
     <label className="flex items-center gap-3 rounded-md border p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
@@ -223,7 +277,8 @@ function PaymentOption({
         type="radio"
         name="paymentMethod"
         value={value}
-        defaultChecked={value === 'esewa'}
+        checked={checked}
+        onChange={onChange}
         className="h-4 w-4"
         required
       />

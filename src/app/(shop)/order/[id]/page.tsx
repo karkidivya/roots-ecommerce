@@ -119,7 +119,10 @@ export default async function OrderPage({
         <h2 className="text-lg font-semibold mb-3">Shipping Address</h2>
         <div className="text-sm text-muted-foreground space-y-1">
           <p className="text-foreground font-medium">{order.customerName}</p>
-          <p>{order.customerPhone} · {order.customerEmail}</p>
+          <p>
+            {order.customerPhone}
+            {order.customerEmail && ` · ${order.customerEmail}`}
+          </p>
           <p>{order.shippingAddress}</p>
           {order.shippingLandmark && <p>Landmark: {order.shippingLandmark}</p>}
           <p>

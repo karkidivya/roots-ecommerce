@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, ilike, or } from 'drizzle-orm';
 import { Search } from 'lucide-react';
 
 export const metadata = {
@@ -12,20 +12,23 @@ export const metadata = {
 async function lookupOrder(formData: FormData) {
   'use server';
   const orderNumber = String(formData.get('orderNumber') || '').trim();
-  const email = String(formData.get('email') || '').trim().toLowerCase();
+  const contact = String(formData.get('contact') || '').trim().toLowerCase();
 
-  if (!orderNumber || !email) {
+  if (!orderNumber || !contact) {
     redirect(`/track?error=missing`);
   }
 
-  // Match order number case-insensitively, email case-insensitively
+  // Match by orderNumber AND (email OR phone) — case-insensitive
   const [order] = await db
     .select({ id: orders.id })
     .from(orders)
     .where(
       and(
         ilike(orders.orderNumber, orderNumber),
-        ilike(orders.customerEmail, email)
+        or(
+          ilike(orders.customerEmail, contact),
+          ilike(orders.customerPhone, contact)
+        )
       )
     )
     .limit(1);
@@ -46,9 +49,9 @@ const ERRORS: Record<string, string> = {
 export default async function TrackPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; orderNumber?: string; email?: string }>;
+  searchParams: Promise<{ error?: string; orderNumber?: string }>;
 }) {
-  const { error, orderNumber, email } = await searchParams;
+  const { error, orderNumber } = await searchParams;
   const errorMessage = error && ERRORS[error];
 
   return (
@@ -85,18 +88,17 @@ export default async function TrackPage({
 
           <div>
             <label
-              htmlFor="email"
+              htmlFor="contact"
               className="text-xs uppercase tracking-[0.18em] text-muted-foreground block mb-2"
             >
-              Email <span className="text-foreground">*</span>
+              Email or phone <span className="text-foreground">*</span>
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
+              id="contact"
+              name="contact"
+              type="text"
               required
-              defaultValue={email || ''}
-              placeholder="The email you used at checkout"
+              placeholder="The email or phone you used at checkout"
               className="h-11 w-full rounded-sm border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
           </div>

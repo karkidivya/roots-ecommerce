@@ -8,6 +8,7 @@ import { formatPrice } from '@/lib/utils';
 import { isAdminAuthenticated } from '@/lib/auth';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { LocationPicker } from '@/components/shop/location-picker';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,24 @@ async function updateOrderStatus(orderId: string, formData: FormData) {
   revalidatePath('/admin');
 }
 
+async function updateOrderLocation(orderId: string, formData: FormData) {
+  'use server';
+  if (!(await isAdminAuthenticated())) throw new Error('Unauthorized');
+  const lat = String(formData.get('shippingLat') || '').trim();
+  const lng = String(formData.get('shippingLng') || '').trim();
+
+  await db
+    .update(orders)
+    .set({
+      shippingLat: lat || null,
+      shippingLng: lng || null,
+      updatedAt: new Date(),
+    })
+    .where(eq(orders.id, orderId));
+
+  revalidatePath(`/admin/orders/${orderId}`);
+}
+
 export default async function AdminOrderDetailPage({
   params,
 }: {
@@ -49,6 +68,7 @@ export default async function AdminOrderDetailPage({
   const items = await db.select().from(orderItems).where(eq(orderItems.orderId, id));
 
   const updateAction = updateOrderStatus.bind(null, id);
+  const updateLocationAction = updateOrderLocation.bind(null, id);
 
   return (
     <div>
@@ -145,6 +165,38 @@ export default async function AdminOrderDetailPage({
                 <p className="text-sm">{order.notes}</p>
               </div>
             )}
+          </section>
+
+          <section className="rounded-lg border bg-card p-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold">Delivery location</h2>
+              {order.shippingLat && order.shippingLng && (
+                <a
+                  href={`https://www.google.com/maps?q=${order.shippingLat},${order.shippingLng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline"
+                >
+                  Open in Google Maps ↗
+                </a>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              {order.shippingLat && order.shippingLng
+                ? 'Customer pinned this spot at checkout. Drag, search, or click to adjust.'
+                : 'Customer did not pin a location. You can add one — useful for delivery agents.'}
+            </p>
+            <form action={updateLocationAction} className="space-y-3">
+              <LocationPicker
+                initialLat={order.shippingLat}
+                initialLng={order.shippingLng}
+              />
+              <div className="flex justify-end">
+                <Button type="submit" size="sm">
+                  Save location
+                </Button>
+              </div>
+            </form>
           </section>
         </div>
 

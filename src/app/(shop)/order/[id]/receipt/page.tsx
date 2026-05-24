@@ -54,8 +54,8 @@ export default async function ReceiptPage({
       </div>
 
       {/* Receipt body */}
-      <div className="container mx-auto px-6 py-10 max-w-3xl">
-        <div className="border bg-card p-10">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10 max-w-3xl">
+        <div className="border bg-card p-6 sm:p-10">
           {/* Header */}
           <div className="flex items-start justify-between mb-8 pb-6 border-b">
             <div>
@@ -71,7 +71,7 @@ export default async function ReceiptPage({
           </div>
 
           {/* Bill to / payment */}
-          <div className="grid grid-cols-2 gap-8 text-xs mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 text-xs mb-8">
             <div>
               <p className="uppercase tracking-wider text-muted-foreground mb-2">
                 Bill to
@@ -88,7 +88,7 @@ export default async function ReceiptPage({
                 {order.shippingDistrict}, {order.shippingProvince}
               </p>
             </div>
-            <div className="text-right">
+            <div className="sm:text-right">
               <p className="uppercase tracking-wider text-muted-foreground mb-2">
                 Payment
               </p>
@@ -101,7 +101,8 @@ export default async function ReceiptPage({
           </div>
 
           {/* Items */}
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+          <table className="w-full text-sm min-w-[420px]">
             <thead>
               <tr className="border-b text-xs uppercase tracking-wider text-muted-foreground">
                 <th className="py-2 text-left font-medium">Item</th>
@@ -126,10 +127,11 @@ export default async function ReceiptPage({
               ))}
             </tbody>
           </table>
+          </div>
 
           {/* Totals */}
           <div className="flex justify-end mt-6 text-sm">
-            <div className="w-64 space-y-1">
+            <div className="w-full sm:w-64 space-y-1">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
                 <span>{formatPrice(order.subtotal)}</span>

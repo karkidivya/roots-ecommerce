@@ -124,7 +124,7 @@ export const orders = pgTable(
     orderNumber: text('order_number').notNull(),
     // Guest checkout - no user FK needed
     customerName: text('customer_name').notNull(),
-    customerEmail: text('customer_email').notNull(),
+    customerEmail: text('customer_email'),
     customerPhone: text('customer_phone').notNull(),
     // Nepal address fields
     shippingProvince: text('shipping_province').notNull(),
@@ -133,6 +133,9 @@ export const orders = pgTable(
     shippingWard: text('shipping_ward'),
     shippingAddress: text('shipping_address').notNull(),
     shippingLandmark: text('shipping_landmark'),
+    // Optional GPS pin from the checkout map — for precise delivery
+    shippingLat: text('shipping_lat'),
+    shippingLng: text('shipping_lng'),
     // Totals (in paisa)
     subtotal: integer('subtotal').notNull(),
     shippingFee: integer('shipping_fee').default(0).notNull(),
