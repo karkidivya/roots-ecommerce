@@ -12,12 +12,12 @@ export default function ContactPage() {
       <div className="max-w-3xl mx-auto">
         <p className="eyebrow mb-4">Reach us</p>
         <h1 className="font-serif text-4xl md:text-5xl leading-[1.05] text-balance">
-          We&apos;d love to hear from you.
+          The roots grow with you.
         </h1>
         <p className="mt-5 text-muted-foreground leading-relaxed max-w-xl">
-          Whether you&apos;re curious about a product, want to partner with us,
-          or have feedback to share — drop us a line. We answer most messages
-          within one business day.
+          Whether you&apos;re curious about an AKSHYATA product, want to stock
+          us in your store, or just have feedback — drop us a line. We read
+          every message and reply within one business day.
         </p>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2">

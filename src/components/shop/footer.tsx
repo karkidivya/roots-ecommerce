@@ -12,8 +12,11 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <p className="font-serif text-2xl leading-snug max-w-md text-balance">
-              Heritage grains, wild honey and Ayurvedic herbs — sourced
-              farmer-direct from the Himalayas.
+              <span className="italic">AKSHYATA</span> by Grain Roots Food —
+              rooted in nature, growing the future.
+            </p>
+            <p className="mt-3 text-sm text-muted-foreground max-w-md">
+              Pure sattu and heritage grains. Made for modern life.
             </p>
           </div>
 

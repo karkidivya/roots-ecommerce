@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export const metadata = {
   title: 'Our Story',
-  description: 'Heritage grains, wild honey and Ayurvedic herbs — farmer-direct from the Himalayas.',
+  description: 'AKSHYATA by Grain Roots Food — Rooted in nature, growing the future.',
 };
 
 export default function AboutPage() {
@@ -13,12 +13,14 @@ export default function AboutPage() {
         <div className="max-w-3xl">
           <p className="eyebrow mb-4">Our story</p>
           <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance">
-            From highland farms to your kitchen.
+            From a simple thought
+            <br />
+            <span className="italic">to something real, made for you.</span>
           </h1>
           <p className="mt-6 text-muted-foreground leading-relaxed max-w-xl text-pretty">
-            We started with one belief — that the best food in Nepal is grown
-            by smallholder farmers at altitudes most people will never reach.
-            Our job is simply to make it easy for you to taste it.
+            Your love and support have been truly overwhelming — and we genuinely
+            feel it. Grain Roots Food started with one belief: real strength,
+            energy and nutrition is already connected to our roots.
           </p>
         </div>
       </section>
@@ -36,13 +38,40 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Why AKSHYATA */}
+      <section className="container mx-auto px-6 py-20 border-t">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
+          <div>
+            <p className="eyebrow mb-4">AKSHYATA</p>
+            <h2 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
+              Real food. Real strength. Rooted in nature.
+            </h2>
+          </div>
+          <div className="text-muted-foreground leading-relaxed space-y-4">
+            <p>
+              Our grandmothers already knew it. Sattu, millets, cold-pressed
+              oils, raw honey — this is what gave generations their energy and
+              strength. The processed-food era made us forget.
+            </p>
+            <p>
+              AKSHYATA is our answer. Premium sattu — Chana, Jau, Multigrain —
+              slow-roasted and stone-ground fresh. Quick to prepare. Easy to
+              consume. Made for busy modern mornings.
+            </p>
+            <p className="font-serif text-foreground italic">
+              Pure. Honest. Nutritious. Real.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Sustainability */}
       <section id="sustainability" className="container mx-auto px-6 py-20 border-t">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
           <div>
-            <p className="eyebrow mb-4">Sustainability</p>
+            <p className="eyebrow mb-4">The bridge we&apos;re building</p>
             <h2 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
-              Slow food. Slow trade. Done right.
+              Traditional nutrition, modern healthy living.
             </h2>
           </div>
           <div className="text-muted-foreground leading-relaxed space-y-4">
@@ -52,8 +81,9 @@ export default function AboutPage() {
               keeps heritage varieties alive.
             </p>
             <p>
-              Every package is recyclable or compostable. We don&apos;t use
-              shrink wrap, plastic clamshells or single-use bubble wrap.
+              Every package is recyclable or compostable. No shrink wrap, no
+              plastic clamshells, no single-use bubble wrap. Slow food, slow
+              trade, done right.
             </p>
           </div>
         </div>
@@ -63,22 +93,23 @@ export default function AboutPage() {
       <section id="farmers" className="container mx-auto px-6 py-20 border-t">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
           <div>
-            <p className="eyebrow mb-4">Our farmers</p>
+            <p className="eyebrow mb-4">The roots are spreading 🌾</p>
             <h2 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
-              Single-village sourcing.
+              From Biratnagar to Butwal and Hetauda — and just getting started.
             </h2>
           </div>
           <div className="text-muted-foreground leading-relaxed space-y-4">
             <p>
-              Our heritage rice comes from a single Marsi-growing village in
-              Jumla. Our honey from one cliff in Taplejung. Our buckwheat from
-              the high passes of Mustang.
+              AKSHYATA is now stocked at selected marts in Biratnagar, Butwal
+              and Hetauda. Every store we reach, every family we feed, brings
+              us one step closer to bringing real nutrition back to every Nepali
+              home.
             </p>
             <p>
-              Single-village sourcing means we know exactly who grew what,
-              where, and how. It also means small harvests sometimes — when
-              an item is in season, it&apos;s in season; when it&apos;s gone,
-              it&apos;s gone.
+              Want AKSHYATA in your store?{' '}
+              <a href="/wholesale" className="text-foreground underline underline-offset-4">
+                Apply to be a stockist.
+              </a>
             </p>
           </div>
         </div>
