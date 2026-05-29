@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ShoppingBag, Search, Menu, X, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, ChevronDown, Instagram, Facebook } from 'lucide-react';
+import { TiktokIcon } from './tiktok-icon';
 import { useCartStore } from '@/lib/cart/store';
 import { useState, useEffect, useRef } from 'react';
 
@@ -251,6 +252,36 @@ export function Header({ categories }: { categories: HeaderCategory[] }) {
             <Link href="/contact" onClick={() => setMobileOpen(false)} className="py-2 text-sm">
               Contact
             </Link>
+
+            <div className="mt-6 pt-5 border-t border-border/60 flex items-center gap-2">
+              <a
+                href="https://www.instagram.com/grainrootsfood/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="grid place-items-center h-9 w-9 rounded-full border"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/grainrootsfood"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="grid place-items-center h-9 w-9 rounded-full border"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.tiktok.com/@grainrootsfood"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="grid place-items-center h-9 w-9 rounded-full border"
+              >
+                <TiktokIcon className="h-4 w-4" />
+              </a>
+            </div>
           </div>
         </nav>
       )}

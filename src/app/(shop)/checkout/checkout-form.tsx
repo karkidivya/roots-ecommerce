@@ -13,12 +13,26 @@ import { Select } from '@/components/ui/select';
 import { LocationPicker } from '@/components/shop/location-picker';
 import { createOrder } from './actions';
 
-export function CheckoutForm() {
+export type PaymentMethodKey = 'esewa' | 'khalti' | 'fonepay' | 'cod';
+
+interface PaymentMethodOption {
+  key: PaymentMethodKey;
+  label: string;
+  description: string;
+}
+
+export function CheckoutForm({
+  paymentMethods = [],
+}: {
+  paymentMethods?: PaymentMethodOption[];
+}) {
   const router = useRouter();
   const { items, getSubtotal, clearCart } = useCartStore();
   const [submitting, setSubmitting] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'esewa' | 'khalti' | 'fonepay' | 'cod'>('esewa');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodKey>(
+    (paymentMethods[0]?.key as PaymentMethodKey) || 'cod'
+  );
 
   useEffect(() => setHydrated(true), []);
 
@@ -172,34 +186,22 @@ export function CheckoutForm() {
         <section className="rounded-lg border p-6">
           <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
           <div className="space-y-3">
-            <PaymentOption
-              value="esewa"
-              label="eSewa"
-              desc="Pay via eSewa wallet"
-              checked={paymentMethod === 'esewa'}
-              onChange={() => setPaymentMethod('esewa')}
-            />
-            <PaymentOption
-              value="khalti"
-              label="Khalti"
-              desc="Pay via Khalti wallet"
-              checked={paymentMethod === 'khalti'}
-              onChange={() => setPaymentMethod('khalti')}
-            />
-            <PaymentOption
-              value="fonepay"
-              label="Fonepay"
-              desc="Pay via Fonepay QR / mobile banking"
-              checked={paymentMethod === 'fonepay'}
-              onChange={() => setPaymentMethod('fonepay')}
-            />
-            <PaymentOption
-              value="cod"
-              label="Cash on Delivery"
-              desc="Pay in cash when your order arrives"
-              checked={paymentMethod === 'cod'}
-              onChange={() => setPaymentMethod('cod')}
-            />
+            {paymentMethods.length === 0 ? (
+              <p className="text-sm text-destructive">
+                No payment methods are currently available. Please contact us.
+              </p>
+            ) : (
+              paymentMethods.map((m) => (
+                <PaymentOption
+                  key={m.key}
+                  value={m.key}
+                  label={m.label}
+                  desc={m.description}
+                  checked={paymentMethod === m.key}
+                  onChange={() => setPaymentMethod(m.key)}
+                />
+              ))
+            )}
           </div>
         </section>
       </div>

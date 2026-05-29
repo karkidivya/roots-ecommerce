@@ -156,7 +156,7 @@ export default async function ReceiptPage({
           {/* Footer */}
           <div className="mt-12 pt-6 border-t text-center text-xs text-muted-foreground">
             <p>Thank you for shopping with {brand}.</p>
-            <p className="mt-1">Questions? karkidivya5@gmail.com</p>
+            <p className="mt-1">Questions? foodgrainroots@gmail.com</p>
           </div>
         </div>
       </div>

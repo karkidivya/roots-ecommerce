@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { Facebook, Instagram } from 'lucide-react';
+import { TiktokIcon } from '@/components/shop/tiktok-icon';
 
 export function Footer() {
   const brand = process.env.NEXT_PUBLIC_APP_NAME || 'Nepal Shop';
@@ -39,10 +41,39 @@ export function Footer() {
           <div className="md:col-span-3">
             <p className="eyebrow mb-4">Get in touch</p>
             <ul className="space-y-2.5 text-sm text-muted-foreground">
-              <li>support@example.com</li>
-              <li>+977-1-XXX-XXXX</li>
-              <li>Kathmandu, Nepal</li>
+              <li>foodgrainroots@gmail.com</li>
+              <li>+977-9868074388</li>
+              <li>Dhat, Biratnagar</li>
             </ul>
+            <div className="mt-4 flex items-center gap-2">
+              <a
+                href="https://www.instagram.com/grainrootsfood/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="grid place-items-center h-9 w-9 rounded-full border hover:bg-foreground hover:text-background hover:border-foreground transition-colors"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/grainrootsfood"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="grid place-items-center h-9 w-9 rounded-full border hover:bg-foreground hover:text-background hover:border-foreground transition-colors"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.tiktok.com/@grainrootsfood"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="grid place-items-center h-9 w-9 rounded-full border hover:bg-foreground hover:text-background hover:border-foreground transition-colors"
+              >
+                <TiktokIcon className="h-4 w-4" />
+              </a>
+            </div>
           </div>
         </div>
 

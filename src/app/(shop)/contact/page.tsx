@@ -1,4 +1,5 @@
 import { Mail, Phone, MapPin, Instagram, Facebook } from 'lucide-react';
+import { TiktokIcon } from '@/components/shop/tiktok-icon';
 
 export const metadata = {
   title: 'Contact',
@@ -23,37 +24,59 @@ export default function ContactPage() {
           <ContactItem
             icon={<Mail className="h-4 w-4" />}
             label="Email"
-            value="karkidivya5@gmail.com"
-            href="mailto:karkidivya5@gmail.com"
+            value="foodgrainroots@gmail.com"
+            href="mailto:foodgrainroots@gmail.com"
           />
           <ContactItem
             icon={<Phone className="h-4 w-4" />}
             label="Phone"
-            value="+977-9863867234"
-            href="tel:+977xxxxxxx"
+            value="+977-9868074388"
+            href="tel:+9779868074388"
           />
           <ContactItem
             icon={<MapPin className="h-4 w-4" />}
             label="Address"
-            value="Biratnagar, Nepal"
+            value="Dhat, Biratnagar"
           />
-          <ContactItem
-            icon={<Instagram className="h-4 w-4" />}
-            label="Social"
-            value="@grainroots"
-            href="#"
-            secondary={{
-              icon: <Facebook className="h-4 w-4" />,
-              value: 'facebook.com/grainrootsfood',
-              href: '#',
-            }}
-          />
+          <div>
+            <p className="eyebrow mb-3">Social</p>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://www.instagram.com/grainrootsfood/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="grid place-items-center h-10 w-10 rounded-full bg-muted hover:bg-foreground hover:text-background transition-colors"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/grainrootsfood"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="grid place-items-center h-10 w-10 rounded-full bg-muted hover:bg-foreground hover:text-background transition-colors"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.tiktok.com/@grainrootsfood"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="grid place-items-center h-10 w-10 rounded-full bg-muted hover:bg-foreground hover:text-background transition-colors"
+              >
+                <TiktokIcon className="h-4 w-4" />
+              </a>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">@grainrootsfood</p>
+          </div>
         </div>
 
         <div className="mt-16 border-t pt-10">
           <h2 className="font-serif text-2xl mb-6">Send a message</h2>
           <form
-            action="mailto:karkidivya5@gmail.com"
+            action="mailto:foodgrainroots@gmail.com"
             method="POST"
             encType="text/plain"
             className="grid gap-4 max-w-xl"

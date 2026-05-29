@@ -215,6 +215,23 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   }),
 }));
 
+// Payment method visibility config (admin toggles which methods show at checkout)
+export const paymentMethodConfig = pgTable(
+  'payment_method_config',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    key: text('key').notNull(), // 'esewa' | 'khalti' | 'fonepay' | 'cod'
+    label: text('label').notNull(),
+    description: text('description'),
+    isEnabled: boolean('is_enabled').default(true).notNull(),
+    sortOrder: integer('sort_order').default(0).notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (t) => ({
+    keyIdx: uniqueIndex('payment_methods_key_idx').on(t.key),
+  })
+);
+
 // Site sections (editable homepage blocks)
 export const siteSections = pgTable(
   'site_sections',
@@ -249,6 +266,7 @@ export const siteSections = pgTable(
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type SiteSection = typeof siteSections.$inferSelect;
+export type PaymentMethodConfig = typeof paymentMethodConfig.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type OrderItem = typeof orderItems.$inferSelect;

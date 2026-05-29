@@ -120,8 +120,8 @@ export default async function TrackPage({
           <p>
             Lost your order number? Check the confirmation email we sent after
             checkout, or email us at{' '}
-            <a className="text-foreground hover:underline" href="mailto:karkidivya5@gmail.com">
-              karkidivya5@gmail.com
+            <a className="text-foreground hover:underline" href="mailto:foodgrainroots@gmail.com">
+              foodgrainroots@gmail.com
             </a>{' '}
             with your phone number and we&apos;ll find it.
           </p>

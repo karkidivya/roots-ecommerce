@@ -44,6 +44,12 @@ export default async function ProtectedAdminLayout({
           >
             Orders
           </Link>
+          <Link
+            href="/admin/payment-methods"
+            className="block rounded-md px-3 py-2 hover:bg-accent"
+          >
+            Payment Methods
+          </Link>
         </nav>
         <div className="mt-6 pt-6 border-t">
           <LogoutButton />

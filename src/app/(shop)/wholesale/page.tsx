@@ -81,7 +81,7 @@ export default function WholesalePage() {
                 In the meantime, email us directly with your business details.
               </p>
               <a
-                href="mailto:karkidivya5@gmail.com?subject=Wholesale%20Partner%20Application"
+                href="mailto:foodgrainroots@gmail.com?subject=Wholesale%20Partner%20Application"
                 className="inline-flex h-11 items-center justify-center rounded-sm bg-foreground px-6 text-sm font-medium text-background hover:bg-foreground/85"
               >
                 Email us
