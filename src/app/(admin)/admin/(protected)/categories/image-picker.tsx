@@ -17,10 +17,10 @@ export function CategoryImagePicker({ name, initial = '' }: Props) {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
   const cloudinaryReady =
-    cloudName &&
+    !!cloudName &&
     cloudName !== 'your_cloud_name' &&
-    uploadPreset &&
-    uploadPreset !== 'nepal_shop_unsigned';
+    !!uploadPreset &&
+    uploadPreset !== 'your_upload_preset';
 
   const applyDraft = () => {
     const v = draft.trim();

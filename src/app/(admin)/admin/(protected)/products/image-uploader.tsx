@@ -35,10 +35,10 @@ export function ImageUploader({ name, initial = [] }: Props) {
   };
 
   const cloudinaryReady =
-    cloudName &&
+    !!cloudName &&
     cloudName !== 'your_cloud_name' &&
-    uploadPreset &&
-    uploadPreset !== 'nepal_shop_unsigned';
+    !!uploadPreset &&
+    uploadPreset !== 'your_upload_preset';
 
   return (
     <div className="space-y-4">
