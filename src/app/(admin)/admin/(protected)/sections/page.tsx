@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
-import { siteSections } from '@/lib/db/schema';
+import { siteSections, type SiteSection } from '@/lib/db/schema';
 import { asc } from 'drizzle-orm';
 import { Button } from '@/components/ui/button';
 import { toggleSection } from './actions';
@@ -14,15 +14,48 @@ export default async function AdminSectionsPage() {
     .from(siteSections)
     .orderBy(asc(siteSections.sortOrder));
 
+  const aboutRows = items.filter((s) => s.key.startsWith('about-'));
+  const homeRows = items.filter((s) => !s.key.startsWith('about-'));
+
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Homepage Content</h1>
+        <h1 className="text-3xl font-bold">Website Content</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Edit, reorder, or hide the editorial sections on your homepage.
+          Edit, reorder, or hide sections across the homepage and About page.
         </p>
       </div>
 
+      <SectionsTable
+        title="Homepage"
+        subtitle="Sections on /"
+        rows={homeRows}
+      />
+
+      <SectionsTable
+        title="About page"
+        subtitle="Sections on /about"
+        rows={aboutRows}
+      />
+    </div>
+  );
+}
+
+function SectionsTable({
+  title,
+  subtitle,
+  rows,
+}: {
+  title: string;
+  subtitle: string;
+  rows: SiteSection[];
+}) {
+  return (
+    <div className="mb-10">
+      <div className="mb-3 flex items-baseline gap-3">
+        <h2 className="font-serif text-xl">{title}</h2>
+        <p className="text-xs text-muted-foreground">{subtitle}</p>
+      </div>
       <div className="rounded-lg border bg-card overflow-hidden">
         <table className="w-full text-sm">
           <thead className="border-b bg-muted/30">
@@ -35,7 +68,7 @@ export default async function AdminSectionsPage() {
             </tr>
           </thead>
           <tbody>
-            {items.map((s) => {
+            {rows.map((s) => {
               const toggleAction = toggleSection.bind(null, s.id, !s.isEnabled);
               return (
                 <tr key={s.id} className="border-b last:border-0">
@@ -95,10 +128,10 @@ export default async function AdminSectionsPage() {
                 </tr>
               );
             })}
-            {items.length === 0 && (
+            {rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="p-12 text-center text-muted-foreground">
-                  No sections yet — run <code>npm run db:seed</code> to create defaults.
+                  No sections yet.
                 </td>
               </tr>
             )}

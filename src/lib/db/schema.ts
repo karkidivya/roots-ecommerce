@@ -165,8 +165,12 @@ export const orderItems = pgTable(
     orderId: uuid('order_id')
       .notNull()
       .references(() => orders.id, { onDelete: 'cascade' }),
-    productId: uuid('product_id').references(() => products.id),
-    variantId: uuid('variant_id').references(() => productVariants.id),
+    productId: uuid('product_id').references(() => products.id, {
+      onDelete: 'set null',
+    }),
+    variantId: uuid('variant_id').references(() => productVariants.id, {
+      onDelete: 'set null',
+    }),
     productName: text('product_name').notNull(), // snapshot
     variantName: text('variant_name'),
     productImage: text('product_image'),

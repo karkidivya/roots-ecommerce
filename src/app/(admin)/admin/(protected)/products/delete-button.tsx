@@ -1,6 +1,7 @@
 'use client';
 
 import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { deleteProduct } from './actions';
@@ -8,6 +9,7 @@ import { toast } from 'sonner';
 
 export function DeleteProductButton({ id, name }: { id: string; name: string }) {
   const [pending, start] = useTransition();
+  const router = useRouter();
 
   const handleClick = () => {
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
@@ -15,8 +17,14 @@ export function DeleteProductButton({ id, name }: { id: string; name: string }) 
       try {
         await deleteProduct(id);
         toast.success('Product deleted');
+        router.refresh();
       } catch (err) {
-        toast.error('Failed to delete product');
+        console.error(err);
+        const msg =
+          err instanceof Error && err.message
+            ? err.message
+            : 'Failed to delete product';
+        toast.error(msg);
       }
     });
   };

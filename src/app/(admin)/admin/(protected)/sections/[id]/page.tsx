@@ -27,9 +27,23 @@ export default async function EditSectionPage({
     .limit(1);
   if (!section) notFound();
 
-  const showImage = ['hero', 'editorial'].includes(section.key);
-  const showBody = ['statement', 'editorial', 'hero', 'wholesale-cta'].includes(section.key);
-  const showCtas = ['hero', 'editorial', 'wholesale-cta'].includes(section.key);
+  const showImage = ['hero', 'editorial', 'about-hero'].includes(section.key);
+  const showBody = [
+    'statement',
+    'editorial',
+    'hero',
+    'wholesale-cta',
+    'about-hero',
+    'about-why',
+    'about-sustainability',
+    'about-farmers',
+  ].includes(section.key);
+  const showCtas = [
+    'hero',
+    'editorial',
+    'wholesale-cta',
+    'about-farmers',
+  ].includes(section.key);
   const showProductPicker = ['featured-products', 'new-arrivals'].includes(section.key);
 
   // Load product catalog only when this section needs it

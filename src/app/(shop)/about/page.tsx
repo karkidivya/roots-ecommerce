@@ -1,119 +1,104 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { db } from '@/lib/db';
+import { siteSections, type SiteSection } from '@/lib/db/schema';
+import { and, eq, ilike, asc } from 'drizzle-orm';
 
 export const metadata = {
   title: 'Our Story',
   description: 'AKSHYATA by Grain Roots Food — Rooted in nature, growing the future.',
 };
 
-export default function AboutPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function AboutPage() {
+  const rows = await db
+    .select()
+    .from(siteSections)
+    .where(
+      and(ilike(siteSections.key, 'about-%'), eq(siteSections.isEnabled, true))
+    )
+    .orderBy(asc(siteSections.sortOrder));
+
+  const byKey = Object.fromEntries(rows.map((r) => [r.key, r]));
+  const hero = byKey['about-hero'];
+  const splits = rows.filter((r) => r.key !== 'about-hero');
+
   return (
     <>
-      {/* Hero */}
-      <section className="container mx-auto px-6 py-20 md:py-28">
-        <div className="max-w-3xl">
-          <p className="eyebrow mb-4">Our story</p>
-          <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance">
-            From a simple thought
-            <br />
-            <span className="italic">to something real, made for you.</span>
-          </h1>
-          <p className="mt-6 text-muted-foreground leading-relaxed max-w-xl text-pretty">
-            Your love and support have been truly overwhelming — and we genuinely
-            feel it. Grain Roots Food started with one belief: real strength,
-            energy and nutrition is already connected to our roots.
-          </p>
-        </div>
-      </section>
+      {hero && (
+        <>
+          <section className="container mx-auto px-6 py-20 md:py-28">
+            <div className="max-w-3xl">
+              {hero.eyebrow && <p className="eyebrow mb-4">{hero.eyebrow}</p>}
+              {hero.heading && (
+                <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance">
+                  {hero.heading}
+                </h1>
+              )}
+              {hero.body && (
+                <p className="mt-6 text-muted-foreground leading-relaxed max-w-xl text-pretty whitespace-pre-line">
+                  {hero.body}
+                </p>
+              )}
+            </div>
+          </section>
 
-      {/* Editorial image */}
-      <section className="container mx-auto px-6 pb-20">
-        <div className="relative aspect-[16/9] overflow-hidden">
-          <Image
-            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=85&w=2000"
-            alt="Highland farms"
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
-      </section>
+          {hero.imageUrl && (
+            <section className="container mx-auto px-6 pb-20">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <Image
+                  src={hero.imageUrl}
+                  alt={hero.heading || 'About'}
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              </div>
+            </section>
+          )}
+        </>
+      )}
 
-      {/* Why AKSHYATA */}
-      <section className="container mx-auto px-6 py-20 border-t">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-          <div>
-            <p className="eyebrow mb-4">AKSHYATA</p>
-            <h2 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
-              Real food. Real strength. Rooted in nature.
-            </h2>
-          </div>
-          <div className="text-muted-foreground leading-relaxed space-y-4">
-            <p>
-              Our grandmothers already knew it. Sattu, millets, cold-pressed
-              oils, raw honey — this is what gave generations their energy and
-              strength. The processed-food era made us forget.
-            </p>
-            <p>
-              AKSHYATA is our answer. Premium sattu — Chana, Jau, Multigrain —
-              slow-roasted and stone-ground fresh. Quick to prepare. Easy to
-              consume. Made for busy modern mornings.
-            </p>
-            <p className="font-serif text-foreground italic">
-              Pure. Honest. Nutritious. Real.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Sustainability */}
-      <section id="sustainability" className="container mx-auto px-6 py-20 border-t">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-          <div>
-            <p className="eyebrow mb-4">The bridge we&apos;re building</p>
-            <h2 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
-              Traditional nutrition, modern healthy living.
-            </h2>
-          </div>
-          <div className="text-muted-foreground leading-relaxed space-y-4">
-            <p>
-              We pay our farmers above-market rates and commit to year-round
-              purchases — not just during peak season. That stability is what
-              keeps heritage varieties alive.
-            </p>
-            <p>
-              Every package is recyclable or compostable. No shrink wrap, no
-              plastic clamshells, no single-use bubble wrap. Slow food, slow
-              trade, done right.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Farmers */}
-      <section id="farmers" className="container mx-auto px-6 py-20 border-t">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-          <div>
-            <p className="eyebrow mb-4">The roots are spreading 🌾</p>
-            <h2 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
-              From Biratnagar to Butwal and Hetauda — and just getting started.
-            </h2>
-          </div>
-          <div className="text-muted-foreground leading-relaxed space-y-4">
-            <p>
-              AKSHYATA is now stocked at selected marts in Biratnagar, Butwal
-              and Hetauda. Every store we reach, every family we feed, brings
-              us one step closer to bringing real nutrition back to every Nepali
-              home.
-            </p>
-            <p>
-              Want AKSHYATA in your store?{' '}
-              <a href="/wholesale" className="text-foreground underline underline-offset-4">
-                Apply to be a stockist.
-              </a>
-            </p>
-          </div>
-        </div>
-      </section>
+      {splits.map((s) => (
+        <AboutSplit key={s.id} s={s} />
+      ))}
     </>
+  );
+}
+
+function AboutSplit({ s }: { s: SiteSection }) {
+  const anchor = s.key.replace(/^about-/, '');
+  return (
+    <section id={anchor} className="container mx-auto px-6 py-20 border-t">
+      <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
+        <div>
+          {s.eyebrow && <p className="eyebrow mb-4">{s.eyebrow}</p>}
+          {s.heading && (
+            <h2 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
+              {s.heading}
+            </h2>
+          )}
+        </div>
+        <div className="text-muted-foreground leading-relaxed space-y-4">
+          {s.body &&
+            s.body.split(/\n\n+/).map((para, i) => (
+              <p key={i} className={para.startsWith('_') && para.endsWith('_') ? 'font-serif text-foreground italic' : ''}>
+                {para.replace(/^_|_$/g, '')}
+              </p>
+            ))}
+          {s.cta1Text && s.cta1Href && (
+            <p>
+              <Link
+                href={s.cta1Href}
+                className="text-foreground underline underline-offset-4"
+              >
+                {s.cta1Text}
+              </Link>
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
