@@ -12,6 +12,8 @@ const NAV = [
   { href: '/admin/categories', label: 'Categories' },
   { href: '/admin/sections', label: 'Homepage Content' },
   { href: '/admin/orders', label: 'Orders' },
+  { href: '/admin/coupons', label: 'Coupons' },
+  { href: '/admin/shipping', label: 'Delivery Charges' },
   { href: '/admin/payment-methods', label: 'Payment Methods' },
 ];
 

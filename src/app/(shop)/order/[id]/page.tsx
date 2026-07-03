@@ -4,9 +4,10 @@ import { CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { db } from '@/lib/db';
 import { orders, orderItems } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, fromPaisa } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { OrderTimeline } from '@/components/shop/order-timeline';
+import { PurchaseTracker } from '@/components/analytics/purchase-tracker';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,6 +36,9 @@ export default async function OrderPage({
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-2xl">
+      {isSuccess && (
+        <PurchaseTracker orderNumber={order.orderNumber} value={fromPaisa(order.total)} />
+      )}
       <div className="rounded-lg border p-8 text-center">
         {isSuccess ? (
           <>
@@ -104,9 +108,15 @@ export default async function OrderPage({
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatPrice(order.subtotal)}</span>
           </div>
+          {order.discount > 0 && (
+            <div className="flex justify-between text-green-700">
+              <span>Discount</span>
+              <span>− {formatPrice(order.discount)}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Shipping</span>
-            <span>{formatPrice(order.shippingFee)}</span>
+            <span>{order.shippingFee === 0 ? 'Free' : formatPrice(order.shippingFee)}</span>
           </div>
           <div className="flex justify-between border-t pt-2 font-semibold">
             <span>Total</span>

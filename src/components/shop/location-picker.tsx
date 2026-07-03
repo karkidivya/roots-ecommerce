@@ -106,8 +106,7 @@ export function LocationPicker({
     );
   };
 
-  const runSearch = async (e?: React.FormEvent<HTMLFormElement>) => {
-    if (e) e.preventDefault();
+  const runSearch = async () => {
     const q = query.trim();
     if (!q) return;
     setSearching(true);
@@ -145,16 +144,22 @@ export function LocationPicker({
       {/* Search + locate row */}
       <div className="flex flex-col sm:flex-row gap-2">
         <div ref={searchBoxRef} className="relative flex-1">
-          <form onSubmit={runSearch} className="relative">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  runSearch();
+                }
+              }}
               placeholder="Search a place (e.g. Thamel, Pokhara, ward 5)…"
               className="h-10 w-full rounded-sm border border-input bg-background pl-9 pr-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
-          </form>
+          </div>
           {resultsOpen && (
             <div className="absolute z-[1000] mt-1 w-full rounded-sm border border-border bg-card shadow-soft overflow-hidden">
               {searching ? (

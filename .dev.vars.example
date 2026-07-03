@@ -22,3 +22,14 @@ FONEPAY_SECRET_KEY="..."
 # Email
 RESEND_API_KEY="..."
 RESEND_FROM_EMAIL="orders@yourdomain.com"
+
+# Click-to-chat (digits only, full international number)
+NEXT_PUBLIC_WHATSAPP_NUMBER="9779800000000"
+NEXT_PUBLIC_VIBER_NUMBER=""
+
+# Analytics / ad pixels (NEXT_PUBLIC_* are inlined at BUILD time — for
+# Cloudflare, put these in wrangler.jsonc "vars" or the build environment,
+# not just as runtime secrets).
+NEXT_PUBLIC_GA_ID=""
+NEXT_PUBLIC_META_PIXEL_ID=""
+NEXT_PUBLIC_TIKTOK_PIXEL_ID=""

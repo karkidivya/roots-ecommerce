@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { decodeEsewaResponse, verifyEsewaPayment } from '@/lib/payments/esewa';
+import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 import { fromPaisa } from '@/lib/utils';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -50,6 +51,9 @@ export async function GET(
         updatedAt: new Date(),
       })
       .where(eq(orders.id, orderId));
+    await sendOrderConfirmationEmail(orderId).catch((err) =>
+      console.error('Order confirmation email failed', err)
+    );
     return NextResponse.redirect(`${appUrl}/order/${orderId}?status=success`);
   }
 

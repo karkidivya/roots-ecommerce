@@ -8,7 +8,12 @@ import { formatPrice, calculateDiscountPercent } from '@/lib/utils';
 import { AddToCartButton } from '@/components/shop/add-to-cart';
 import { ProductCard } from '@/components/shop/product-card';
 import { ProductGallery } from '@/components/shop/product-gallery';
+import { whatsappLink } from '@/components/shop/whatsapp-widget';
+import { MessageCircle } from 'lucide-react';
 import type { Metadata } from 'next';
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const BRAND = process.env.NEXT_PUBLIC_APP_NAME || 'Grain Roots';
 
 export const revalidate = 300;
 
@@ -84,8 +89,38 @@ export default async function ProductPage({
       ? calculateDiscountPercent(product.price, product.compareAtPrice)
       : 0;
 
+  const productUrl = `${APP_URL}/products/${product.slug}`;
+  const waLink = whatsappLink(
+    `Hi! I'd like to order: ${product.name} — ${productUrl}`
+  );
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description:
+      product.shortDescription || product.description?.slice(0, 300) || product.name,
+    image: product.images?.length ? product.images : undefined,
+    sku: product.sku || undefined,
+    brand: { '@type': 'Brand', name: BRAND },
+    offers: {
+      '@type': 'Offer',
+      url: productUrl,
+      priceCurrency: 'NPR',
+      price: (product.price / 100).toFixed(2),
+      availability:
+        product.stock > 0
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+    },
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <nav className="text-xs text-muted-foreground mb-6 flex flex-wrap items-center gap-x-1">
         <Link href="/" className="hover:text-foreground">Home</Link>
         {category && (
@@ -140,6 +175,18 @@ export default async function ProductPage({
           <div className="mt-7">
             <AddToCartButton product={product} />
           </div>
+
+          {waLink && product.stock > 0 && (
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-md border border-[#25D366] px-4 py-3 text-sm font-medium text-[#128C7E] transition-colors hover:bg-[#25D366]/10"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Order via WhatsApp
+            </a>
+          )}
 
           {product.description && (
             <div className="mt-10 pt-8 border-t">

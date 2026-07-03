@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { Header } from '@/components/shop/header';
 import { Footer } from '@/components/shop/footer';
 import { CartDrawer } from '@/components/shop/cart-drawer';
+import { WhatsAppWidget } from '@/components/shop/whatsapp-widget';
 
 export const revalidate = 3600; // 1 hour
 
@@ -25,6 +26,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
       <main className="flex-1">{children}</main>
       <Footer />
       <CartDrawer />
+      <WhatsAppWidget />
     </div>
   );
 }

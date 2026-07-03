@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { verifyKhaltiPayment } from '@/lib/payments/khalti';
+import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -32,6 +33,9 @@ export async function GET(req: NextRequest) {
           updatedAt: new Date(),
         })
         .where(eq(orders.id, orderId));
+      await sendOrderConfirmationEmail(orderId).catch((err) =>
+        console.error('Order confirmation email failed', err)
+      );
       return NextResponse.redirect(`${appUrl}/order/${orderId}?status=success`);
     }
 

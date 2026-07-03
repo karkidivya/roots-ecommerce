@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useCartStore } from '@/lib/cart/store';
 import { formatPrice, NEPAL_PROVINCES } from '@/lib/utils';
+import { computeShipping, type ShippingZoneLite } from '@/lib/shipping';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { LocationPicker } from '@/components/shop/location-picker';
-import { createOrder } from './actions';
+import { createOrder, validateCoupon } from './actions';
 
 export type PaymentMethodKey = 'esewa' | 'khalti' | 'fonepay' | 'cod';
 
@@ -21,10 +22,18 @@ interface PaymentMethodOption {
   description: string;
 }
 
+interface AppliedCoupon {
+  code: string;
+  discount: number;
+  label: string;
+}
+
 export function CheckoutForm({
   paymentMethods = [],
+  shippingZones = [],
 }: {
   paymentMethods?: PaymentMethodOption[];
+  shippingZones?: ShippingZoneLite[];
 }) {
   const router = useRouter();
   const { items, getSubtotal, clearCart } = useCartStore();
@@ -34,11 +43,49 @@ export function CheckoutForm({
     (paymentMethods[0]?.key as PaymentMethodKey) || 'cod'
   );
 
+  // Tracked so we can preview the delivery fee and validate coupons live.
+  const [province, setProvince] = useState('');
+  const [district, setDistrict] = useState('');
+  const [phone, setPhone] = useState('');
+
+  // Coupon state
+  const [couponInput, setCouponInput] = useState('');
+  const [applying, setApplying] = useState(false);
+  const [couponError, setCouponError] = useState('');
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
+
   useEffect(() => setHydrated(true), []);
 
   const subtotal = getSubtotal();
-  const shippingFee = 10000;
-  const total = subtotal + shippingFee;
+
+  const shipping = useMemo(
+    () => computeShipping(shippingZones, province, district, subtotal),
+    [shippingZones, province, district, subtotal]
+  );
+
+  const discount = coupon?.discount ?? 0;
+  const total = Math.max(0, subtotal + shipping.fee - discount);
+
+  // Keep the discount honest if the cart subtotal changes after applying.
+  useEffect(() => {
+    if (coupon && discount > subtotal) setCoupon(null);
+  }, [coupon, discount, subtotal]);
+
+  const handleApplyCoupon = async () => {
+    const code = couponInput.trim();
+    if (!code) return;
+    setApplying(true);
+    setCouponError('');
+    const res = await validateCoupon({ code, subtotal, phone });
+    setApplying(false);
+    if (!res.ok) {
+      setCoupon(null);
+      setCouponError(res.error);
+      return;
+    }
+    setCoupon({ code: code.toUpperCase(), discount: res.discount, label: res.label });
+    toast.success('Coupon applied!');
+  };
 
   if (hydrated && items.length === 0) {
     return (
@@ -69,7 +116,8 @@ export function CheckoutForm({
       shippingLat: String(formData.get('shippingLat') || ''),
       shippingLng: String(formData.get('shippingLng') || ''),
       notes: String(formData.get('notes') || ''),
-      paymentMethod: formData.get('paymentMethod') as 'esewa' | 'khalti' | 'fonepay' | 'cod',
+      couponCode: coupon?.code,
+      paymentMethod: formData.get('paymentMethod') as PaymentMethodKey,
       items: items.map((i) => ({
         productId: i.productId,
         variantId: i.variantId,
@@ -120,6 +168,8 @@ export function CheckoutForm({
                 type="tel"
                 required
                 placeholder="98XXXXXXXX"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
             <div className="sm:col-span-2">
@@ -139,7 +189,13 @@ export function CheckoutForm({
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="shippingProvince">Province *</Label>
-              <Select id="shippingProvince" name="shippingProvince" required defaultValue="">
+              <Select
+                id="shippingProvince"
+                name="shippingProvince"
+                required
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+              >
                 <option value="" disabled>Select province</option>
                 {NEPAL_PROVINCES.map((p) => (
                   <option key={p} value={p}>{p}</option>
@@ -148,7 +204,13 @@ export function CheckoutForm({
             </div>
             <div>
               <Label htmlFor="shippingDistrict">District *</Label>
-              <Input id="shippingDistrict" name="shippingDistrict" required />
+              <Input
+                id="shippingDistrict"
+                name="shippingDistrict"
+                required
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+              />
             </div>
             <div>
               <Label htmlFor="shippingMunicipality">Municipality / VDC *</Label>
@@ -228,14 +290,80 @@ export function CheckoutForm({
           ))}
         </div>
 
+        {/* Coupon */}
+        <div className="mt-4 border-t pt-4">
+          {coupon ? (
+            <div className="flex items-center justify-between rounded-md bg-green-50 px-3 py-2 text-sm">
+              <span className="font-medium text-green-800">{coupon.label}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setCoupon(null);
+                  setCouponInput('');
+                }}
+                className="text-xs text-green-700 underline"
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Coupon code"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleApplyCoupon();
+                    }
+                  }}
+                  className="uppercase"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleApplyCoupon}
+                  disabled={applying || !couponInput.trim()}
+                >
+                  {applying ? '...' : 'Apply'}
+                </Button>
+              </div>
+              {couponError && (
+                <p className="mt-1.5 text-xs text-destructive">{couponError}</p>
+              )}
+            </>
+          )}
+        </div>
+
         <div className="mt-4 space-y-2 border-t pt-4 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatPrice(subtotal)}</span>
           </div>
+          {discount > 0 && (
+            <div className="flex justify-between text-green-700">
+              <span>Discount</span>
+              <span>− {formatPrice(discount)}</span>
+            </div>
+          )}
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Shipping</span>
-            <span>{formatPrice(shippingFee)}</span>
+            <span className="text-muted-foreground">
+              Shipping
+              {shipping.zoneName && (
+                <span className="text-xs"> ({shipping.zoneName})</span>
+              )}
+            </span>
+            <span>
+              {!province || !district ? (
+                <span className="text-xs text-muted-foreground">Enter address</span>
+              ) : shipping.isFree || shipping.fee === 0 ? (
+                'Free'
+              ) : (
+                formatPrice(shipping.fee)
+              )}
+            </span>
           </div>
           <div className="flex justify-between border-t pt-2 text-base font-semibold">
             <span>Total</span>

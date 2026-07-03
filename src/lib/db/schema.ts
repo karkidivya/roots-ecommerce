@@ -37,6 +37,16 @@ export const paymentMethodEnum = pgEnum('payment_method', [
   'cod',
 ]);
 
+export const discountTypeEnum = pgEnum('discount_type', ['percent', 'fixed']);
+
+// How a shipping zone is matched against an order's address.
+// 'default' is the catch-all fallback (matchValue ignored).
+export const shippingMatchEnum = pgEnum('shipping_match', [
+  'district',
+  'province',
+  'default',
+]);
+
 // Categories
 export const categories = pgTable(
   'categories',
@@ -266,6 +276,60 @@ export const siteSections = pgTable(
   })
 );
 
+// Discount coupons (e.g. first-order launch offer)
+export const coupons = pgTable(
+  'coupons',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    // Stored uppercase; customers type it at checkout
+    code: text('code').notNull(),
+    description: text('description'),
+    discountType: discountTypeEnum('discount_type').notNull(),
+    // percent: 1–100 · fixed: amount in paisa
+    discountValue: integer('discount_value').notNull(),
+    // Order subtotal (paisa) required before the coupon applies
+    minSubtotal: integer('min_subtotal').default(0).notNull(),
+    // Cap the discount amount in paisa (mainly for percent coupons). Null = uncapped.
+    maxDiscount: integer('max_discount'),
+    // Only valid if the customer's phone has no previous orders
+    firstOrderOnly: boolean('first_order_only').default(false).notNull(),
+    isActive: boolean('is_active').default(true).notNull(),
+    // Total times the code may be redeemed. Null = unlimited.
+    usageLimit: integer('usage_limit'),
+    usedCount: integer('used_count').default(0).notNull(),
+    expiresAt: timestamp('expires_at'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (t) => ({
+    codeIdx: uniqueIndex('coupons_code_idx').on(t.code),
+  })
+);
+
+// Delivery charge zones (admin-configurable). Matched most-specific first:
+// district → province → default fallback.
+export const shippingZones = pgTable(
+  'shipping_zones',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    name: text('name').notNull(),
+    matchType: shippingMatchEnum('match_type').notNull(),
+    // District or province name to match (case-insensitive). Null for 'default'.
+    matchValue: text('match_value'),
+    // Delivery fee in paisa
+    fee: integer('fee').default(0).notNull(),
+    // Free delivery when order subtotal (paisa) reaches this. Null = never free.
+    freeAbove: integer('free_above'),
+    isActive: boolean('is_active').default(true).notNull(),
+    sortOrder: integer('sort_order').default(0).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (t) => ({
+    matchIdx: index('shipping_zones_match_idx').on(t.matchType, t.matchValue),
+  })
+);
+
 // Types
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
@@ -277,3 +341,7 @@ export type OrderItem = typeof orderItems.$inferSelect;
 export type NewProduct = typeof products.$inferInsert;
 export type NewCategory = typeof categories.$inferInsert;
 export type NewOrder = typeof orders.$inferInsert;
+export type Coupon = typeof coupons.$inferSelect;
+export type NewCoupon = typeof coupons.$inferInsert;
+export type ShippingZone = typeof shippingZones.$inferSelect;
+export type NewShippingZone = typeof shippingZones.$inferInsert;
