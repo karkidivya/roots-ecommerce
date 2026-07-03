@@ -7,6 +7,8 @@ import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { DeleteProductButton } from './delete-button';
+import { toggleProductActive } from './actions';
+import { Eye, EyeOff } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,9 +31,9 @@ export default async function AdminProductsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Products</h1>
-        <Button asChild>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">Products</h1>
+        <Button asChild size="sm">
           <Link href="/admin/products/new">
             <Plus className="h-4 w-4" /> Add Product
           </Link>
@@ -39,7 +41,7 @@ export default async function AdminProductsPage() {
       </div>
 
       <div className="rounded-lg border bg-card overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[720px]">
           <thead className="border-b bg-muted/30">
             <tr>
               <th className="p-3 text-left font-medium">Image</th>
@@ -91,15 +93,27 @@ export default async function AdminProductsPage() {
                   </span>
                 </td>
                 <td className="p-3">
-                  <span
-                    className={`inline-block rounded-full px-2 py-0.5 text-xs ${
-                      p.isActive
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {p.isActive ? 'Active' : 'Inactive'}
-                  </span>
+                  <form action={toggleProductActive.bind(null, p.id, !p.isActive)}>
+                    <button
+                      type="submit"
+                      title={p.isActive ? 'Click to hide from storefront' : 'Click to show on storefront'}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        p.isActive
+                          ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {p.isActive ? (
+                        <>
+                          <Eye className="h-3 w-3" /> Live
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="h-3 w-3" /> Hidden
+                        </>
+                      )}
+                    </button>
+                  </form>
                 </td>
                 <td className="p-3 text-right">
                   <div className="flex justify-end gap-2">

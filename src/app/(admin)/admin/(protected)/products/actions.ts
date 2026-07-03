@@ -145,3 +145,14 @@ export async function deleteProduct(id: string) {
   revalidatePath('/products');
   revalidatePath('/');
 }
+
+export async function toggleProductActive(id: string, isActive: boolean) {
+  await requireAdmin();
+  await db
+    .update(productsTable)
+    .set({ isActive, updatedAt: new Date() })
+    .where(eq(productsTable.id, id));
+  revalidatePath('/admin/products');
+  revalidatePath('/products');
+  revalidatePath('/');
+}

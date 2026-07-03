@@ -63,3 +63,13 @@ export async function deleteCategory(id: string) {
   revalidatePath('/admin/categories');
   revalidatePath('/');
 }
+
+export async function toggleCategoryActive(id: string, isActive: boolean) {
+  if (!(await isAdminAuthenticated())) throw new Error('Unauthorized');
+  await db
+    .update(categories)
+    .set({ isActive, updatedAt: new Date() })
+    .where(eq(categories.id, id));
+  revalidatePath('/admin/categories');
+  revalidatePath('/');
+}

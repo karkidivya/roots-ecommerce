@@ -63,15 +63,15 @@ export default async function AdminOrdersPage({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Orders</h1>
+      <div className="flex flex-wrap items-baseline justify-between gap-3 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">Orders</h1>
         <p className="text-sm text-muted-foreground">
           {items.length} {items.length === 1 ? 'order' : 'orders'}
         </p>
       </div>
 
       {/* Filter bar */}
-      <form className="mb-4 grid gap-3 sm:grid-cols-[1fr_180px_180px_auto]">
+      <form className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_180px_180px_auto]">
         <input
           name="q"
           defaultValue={params.q || ''}
@@ -121,7 +121,7 @@ export default async function AdminOrdersPage({
       </form>
 
       <div className="rounded-lg border bg-card overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[820px]">
           <thead className="border-b bg-muted/30">
             <tr>
               <th className="p-3 text-left font-medium">Order #</th>

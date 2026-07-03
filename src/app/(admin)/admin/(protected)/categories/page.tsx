@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { DeleteCategoryButton } from './delete-button';
-import { createCategory } from './actions';
+import { createCategory, toggleCategoryActive } from './actions';
+import { Eye, EyeOff } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,11 +16,11 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Categories</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">Categories</h1>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_400px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="rounded-lg border bg-card overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[520px]">
             <thead className="border-b bg-muted/30">
               <tr>
                 <th className="p-3 text-left font-medium">Name</th>
@@ -36,15 +37,27 @@ export default async function AdminCategoriesPage() {
                     {c.slug}
                   </td>
                   <td className="p-3">
-                    <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-xs ${
-                        c.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {c.isActive ? 'Active' : 'Inactive'}
-                    </span>
+                    <form action={toggleCategoryActive.bind(null, c.id, !c.isActive)}>
+                      <button
+                        type="submit"
+                        title={c.isActive ? 'Click to hide from storefront' : 'Click to show on storefront'}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          c.isActive
+                            ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {c.isActive ? (
+                          <>
+                            <Eye className="h-3 w-3" /> Live
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="h-3 w-3" /> Hidden
+                          </>
+                        )}
+                      </button>
+                    </form>
                   </td>
                   <td className="p-3 text-right">
                     <div className="flex justify-end gap-2">

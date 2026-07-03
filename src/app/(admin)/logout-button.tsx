@@ -1,12 +1,7 @@
-import { redirect } from 'next/navigation';
-import { clearAdminCookie } from '@/lib/auth';
-import { LogOut } from 'lucide-react';
+'use client';
 
-async function logout() {
-  'use server';
-  await clearAdminCookie();
-  redirect('/admin/login');
-}
+import { LogOut } from 'lucide-react';
+import { logout } from './logout-action';
 
 export function LogoutButton() {
   return (
