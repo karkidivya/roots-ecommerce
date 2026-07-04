@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { ShoppingBag, Search, Menu, X, ChevronDown, Instagram, Facebook } from 'lucide-react';
 import { TiktokIcon } from './tiktok-icon';
 import { useCartStore } from '@/lib/cart/store';
@@ -21,6 +21,8 @@ interface HeaderCategory {
 export function Header({ categories }: { categories: HeaderCategory[] }) {
   const { toggleCart, getItemCount } = useCartStore();
   const router = useRouter();
+  const pathname = usePathname();
+  const shopActive = pathname === '/products' || pathname.startsWith('/category');
   const [count, setCount] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -113,13 +115,17 @@ export function Header({ categories }: { categories: HeaderCategory[] }) {
             onMouseEnter={() => openImmediate('shop')}
             onMouseLeave={scheduleClose}
           >
-            <button
-              type="button"
-              onClick={() => (openMenu === 'shop' ? setOpenMenu(null) : openImmediate('shop'))}
-              className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
+            <Link
+              href="/products"
+              onClick={() => setOpenMenu(null)}
+              className={`flex items-center gap-1 transition-colors underline-offset-4 hover:underline ${
+                shopActive || openMenu === 'shop'
+                  ? 'text-foreground font-medium'
+                  : 'hover:text-muted-foreground'
+              }`}
             >
               Shop <ChevronDown className="h-3 w-3" />
-            </button>
+            </Link>
             {openMenu === 'shop' && (
               <ShopMegaMenu
                 categories={categories}
@@ -322,27 +328,34 @@ function ShopMegaMenu({
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }) {
+  // Size the panel to the number of categories (max 4 across) so it doesn't
+  // leave empty columns when only a couple are active.
+  const cols = Math.min(Math.max(categories.length, 1), 4);
+
   return (
     <div
       className="absolute left-0 top-full pt-2 z-50"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className="rounded-sm border border-border bg-card shadow-lift overflow-hidden w-[560px]">
+      <div className="rounded-sm border border-border bg-card shadow-lift overflow-hidden w-max max-w-[560px]">
         {/* Header row */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/70">
+        <div className="flex items-center justify-between gap-8 px-4 py-2.5 border-b border-border/70">
           <p className="eyebrow">Browse</p>
           <Link
             href="/products"
             onClick={onSelect}
-            className="text-xs hover:text-muted-foreground transition-colors"
+            className="text-xs font-medium underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
             All products →
           </Link>
         </div>
 
-        {/* Category cards grid — smaller, denser */}
-        <div className="grid grid-cols-4 gap-3 p-4">
+        {/* Category cards grid — sized to fit the active categories */}
+        <div
+          className="grid gap-3 p-4"
+          style={{ gridTemplateColumns: `repeat(${cols}, 8rem)` }}
+        >
           {categories.map((c) => (
             <Link
               key={c.slug}

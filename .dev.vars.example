@@ -23,9 +23,11 @@ FONEPAY_SECRET_KEY="..."
 RESEND_API_KEY="..."
 RESEND_FROM_EMAIL="orders@yourdomain.com"
 
-# Click-to-chat (digits only, full international number)
+# Order/chat channels. WhatsApp/Viber: digits only. Messenger/Instagram: username.
 NEXT_PUBLIC_WHATSAPP_NUMBER="9779800000000"
 NEXT_PUBLIC_VIBER_NUMBER=""
+NEXT_PUBLIC_MESSENGER_USERNAME="grainrootsfood"
+NEXT_PUBLIC_INSTAGRAM_USERNAME="grainrootsfood"
 
 # Analytics / ad pixels (NEXT_PUBLIC_* are inlined at BUILD time — for
 # Cloudflare, put these in wrangler.jsonc "vars" or the build environment,

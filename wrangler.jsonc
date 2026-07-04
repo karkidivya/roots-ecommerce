@@ -29,7 +29,11 @@
     "NEXT_PUBLIC_APP_NAME": "Grain Roots",
     // Analytics / ad pixels — baked in at build time. Add Meta/TikTok ids here
     // too when you start advertising on those platforms.
-    "NEXT_PUBLIC_GA_ID": "G-WK4G4WBP1V"
+    "NEXT_PUBLIC_GA_ID": "G-WK4G4WBP1V",
+    // Order/chat channels. Messenger/Instagram use the account username.
+    // Add NEXT_PUBLIC_WHATSAPP_NUMBER / _VIBER_NUMBER (digits only) to enable those.
+    "NEXT_PUBLIC_MESSENGER_USERNAME": "grainrootsfood",
+    "NEXT_PUBLIC_INSTAGRAM_USERNAME": "grainrootsfood"
   },
 
   "observability": {

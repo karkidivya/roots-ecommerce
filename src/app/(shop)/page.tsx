@@ -79,9 +79,9 @@ export default async function HomePage() {
             const items = resolveProducts(s, defaultFeatured).slice(0, 8);
             if (items.length === 0) return null;
             return (
-              <section key={s.id} className="container mx-auto px-6 pb-24">
+              <section key={s.id} className="container mx-auto px-6 pb-16 sm:pb-20 md:pb-24">
                 <SectionHeader s={s} viewAllHref="/products" />
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 sm:gap-y-12">
                   {items.slice(0, 4).map((p) => (
                     <ProductCard key={p.id} product={p} />
                   ))}
@@ -95,9 +95,9 @@ export default async function HomePage() {
             return <WholesaleCtaSection key={s.id} s={s} />;
           case 'categories-grid':
             return (
-              <section key={s.id} className="container mx-auto px-6 py-24">
+              <section key={s.id} className="container mx-auto px-6 py-14 sm:py-20 md:py-24">
                 <SectionHeader s={s} />
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 sm:gap-y-12">
                   {cats.map((c) => (
                     <Link key={c.id} href={`/category/${c.slug}`} className="group block">
                       <div className="relative aspect-[4/5] overflow-hidden bg-muted">
@@ -126,9 +126,9 @@ export default async function HomePage() {
             const items = resolveProducts(s, defaultLatest).slice(0, 8);
             if (items.length === 0) return null;
             return (
-              <section key={s.id} className="container mx-auto px-6 py-24">
+              <section key={s.id} className="container mx-auto px-6 py-14 sm:py-20 md:py-24">
                 <SectionHeader s={s} viewAllHref="/products" />
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 sm:gap-y-12">
                   {items.map((p) => (
                     <ProductCard key={p.id} product={p} />
                   ))}

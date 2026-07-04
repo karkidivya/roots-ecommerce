@@ -19,14 +19,14 @@ export function HeroSection({ s }: { s: SiteSection }) {
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/10 via-transparent to-foreground/30" />
         <div className="absolute inset-0 flex items-end">
-          <div className="container mx-auto px-6 pb-20 md:pb-28">
+          <div className="container mx-auto px-6 pb-14 sm:pb-20 md:pb-28">
             {s.eyebrow && (
               <p className="text-[11px] uppercase tracking-[0.3em] text-background/90">
                 {s.eyebrow}
               </p>
             )}
             {s.heading && (
-              <h1 className="mt-5 font-serif text-5xl md:text-7xl text-background max-w-2xl leading-[1.02] text-balance">
+              <h1 className="mt-5 font-serif text-4xl sm:text-5xl md:text-7xl text-background max-w-2xl leading-[1.02] text-balance">
                 {s.heading}
               </h1>
             )}
@@ -62,7 +62,7 @@ export function HeroSection({ s }: { s: SiteSection }) {
 
 export function StatementSection({ s }: { s: SiteSection }) {
   return (
-    <section className="container mx-auto px-6 py-28 md:py-36">
+    <section className="container mx-auto px-6 py-16 sm:py-24 md:py-36">
       <div className="max-w-3xl mx-auto text-center">
         {s.eyebrow && <p className="eyebrow mb-6">{s.eyebrow}</p>}
         {s.body && (
@@ -77,8 +77,8 @@ export function StatementSection({ s }: { s: SiteSection }) {
 
 export function EditorialSection({ s }: { s: SiteSection }) {
   return (
-    <section className="container mx-auto px-6 py-24">
-      <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+    <section className="container mx-auto px-6 py-14 sm:py-20 md:py-24">
+      <div className="grid gap-8 lg:gap-12 lg:grid-cols-2 lg:items-center">
         <div className="relative aspect-[5/6] overflow-hidden">
           {s.imageUrl && (
             <Image
@@ -121,7 +121,7 @@ export function EditorialSection({ s }: { s: SiteSection }) {
 export function WholesaleCtaSection({ s }: { s: SiteSection }) {
   return (
     <section className="bg-foreground text-background">
-      <div className="container mx-auto px-6 py-20 md:py-28">
+      <div className="container mx-auto px-6 py-14 sm:py-20 md:py-28">
         <div className="max-w-3xl mx-auto text-center">
           {s.eyebrow && (
             <p className="text-[11px] uppercase tracking-[0.3em] text-background/70 mb-6">
@@ -156,10 +156,10 @@ export function WholesaleCtaSection({ s }: { s: SiteSection }) {
 
 export function SectionHeader({ s, viewAllHref }: { s: SiteSection; viewAllHref?: string }) {
   return (
-    <div className="flex items-end justify-between mb-10">
+    <div className="flex items-end justify-between mb-6 sm:mb-10">
       <div>
         {s.eyebrow && <p className="eyebrow mb-2">{s.eyebrow}</p>}
-        <h2 className="font-serif text-3xl md:text-4xl">{s.heading}</h2>
+        <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl">{s.heading}</h2>
       </div>
       {viewAllHref && (
         <Link
