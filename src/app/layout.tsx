@@ -26,11 +26,22 @@ const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'Nepal Shop';
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: APP_NAME,
+    default: `${APP_NAME} — Buy Sattu Online in Nepal | AKSHYATA`,
     template: `%s · ${APP_NAME}`,
   },
   description:
-    'Heritage grains, wild honey, fermented foods and Ayurvedic herbs — farmer-direct from the Himalayas.',
+    'Buy AKSHYATA sattu online in Nepal — chana, jau & multigrain sattu, slow-roasted and stone-ground. Heritage grains, millet flours and wild honey, farmer-direct. Home delivery in Biratnagar & across Nepal. Cash on delivery.',
+  keywords: [
+    'sattu',
+    'buy sattu online',
+    'sattu Nepal',
+    'sattu Biratnagar',
+    'chana sattu',
+    'jau sattu',
+    'multigrain sattu',
+    'AKSHYATA',
+    'Grain Roots',
+  ],
   icons: {
     icon: [
       { url: LOGO_URL.replace('/upload/', '/upload/w_32,h_32,c_fill/'), sizes: '32x32' },
@@ -52,10 +63,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
-              '@type': 'Organization',
+              '@type': 'OnlineStore',
               name: APP_NAME,
+              alternateName: 'AKSHYATA by Grain Roots Food',
               url: APP_URL,
               logo: LOGO_URL,
+              description:
+                'Buy AKSHYATA sattu, heritage grains and millet flours online in Nepal. Home delivery in Biratnagar and nationwide, cash on delivery.',
+              telephone: '+977-9868074388',
+              email: 'foodgrainroots@gmail.com',
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Biratnagar',
+                addressRegion: 'Koshi',
+                addressCountry: 'NP',
+              },
+              areaServed: ['Biratnagar', 'Koshi Province', 'Nepal'],
+              sameAs: [
+                'https://www.instagram.com/grainrootsfood/',
+                'https://www.facebook.com/grainrootsfood',
+                'https://www.tiktok.com/@grainrootsfood',
+              ],
             }),
           }}
         />
