@@ -27,6 +27,9 @@
   //   ... etc
   "vars": {
     "NEXT_PUBLIC_APP_NAME": "Grain Roots",
+    // Canonical site URL — used by sitemap.xml, robots.txt, JSON-LD, OG tags,
+    // payment return URLs and WhatsApp product links.
+    "NEXT_PUBLIC_APP_URL": "https://www.grainroots.com.np",
     // Analytics / ad pixels — baked in at build time. Add Meta/TikTok ids here
     // too when you start advertising on those platforms.
     "NEXT_PUBLIC_GA_ID": "G-WK4G4WBP1V",
