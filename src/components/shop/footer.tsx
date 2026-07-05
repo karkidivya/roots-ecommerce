@@ -37,6 +37,7 @@ export function Footer() {
               <li><Link href="/about#farmers" className="hover:text-muted-foreground">Farmers</Link></li>
               <li><Link href="/wholesale" className="hover:text-muted-foreground">Wholesale</Link></li>
               <li><Link href="/track" className="hover:text-muted-foreground">Track order</Link></li>
+              <li><Link href="/returns" className="hover:text-muted-foreground">Returns & refunds</Link></li>
               <li><Link href="/contact" className="hover:text-muted-foreground">Contact</Link></li>
             </ul>
           </div>
