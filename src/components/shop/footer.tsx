@@ -25,6 +25,7 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               <li><Link href="/products" className="hover:text-muted-foreground">All</Link></li>
               <li><Link href="/category/sattu" className="hover:text-muted-foreground">Sattu</Link></li>
+              <li><Link href="/sattu" className="hover:text-muted-foreground">Sattu guide</Link></li>
               <li><Link href="/category/honey" className="hover:text-muted-foreground">Honey</Link></li>
               <li><Link href="/category/tea-herbs" className="hover:text-muted-foreground">Tea & Herbs</Link></li>
             </ul>

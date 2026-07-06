@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .where(eq(categories.isActive, true)),
   ]);
 
-  const staticPages = ['', '/products', '/about', '/contact', '/wholesale', '/track', '/returns'].map(
+  const staticPages = ['', '/products', '/sattu', '/about', '/contact', '/wholesale', '/track', '/returns'].map(
     (path) => ({
       url: `${BASE}${path}`,
       lastModified: new Date(),
