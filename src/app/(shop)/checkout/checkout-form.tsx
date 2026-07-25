@@ -63,8 +63,16 @@ export function CheckoutForm({
     [shippingZones, province, district, subtotal]
   );
 
+  // The delivery fee depends on the destination, so it's unknown until both
+  // province and district are entered. Until then we neither display it nor add
+  // it to the total — otherwise the fallback ("Rest of Nepal") zone fee would be
+  // silently baked into the total while the shipping line still reads
+  // "Enter address".
+  const addressComplete = Boolean(province && district);
+  const shippingFee = addressComplete ? shipping.fee : 0;
+
   const discount = coupon?.discount ?? 0;
-  const total = Math.max(0, subtotal + shipping.fee - discount);
+  const total = Math.max(0, subtotal + shippingFee - discount);
 
   // Keep the discount honest if the cart subtotal changes after applying.
   useEffect(() => {
@@ -356,12 +364,12 @@ export function CheckoutForm({
               )}
             </span>
             <span>
-              {!province || !district ? (
+              {!addressComplete ? (
                 <span className="text-xs text-muted-foreground">Enter address</span>
-              ) : shipping.isFree || shipping.fee === 0 ? (
+              ) : shipping.isFree || shippingFee === 0 ? (
                 'Free'
               ) : (
-                formatPrice(shipping.fee)
+                formatPrice(shippingFee)
               )}
             </span>
           </div>
